@@ -30,6 +30,10 @@
     .login-card button:hover{box-shadow:0 0 24px rgba(255,255,255,.25);transform:translateY(-1px)}.login-card button{transition:.22s ease}.loveRain{position:absolute;inset:0;pointer-events:none;overflow:hidden;border-radius:15px}.loveDrop{position:absolute;top:-12px;font-size:12px;animation:loveFall 10s linear forwards;opacity:.95}@keyframes loveFall{to{transform:translateY(78px) rotate(360deg);opacity:0}}
     .msg.mine{align-items:flex-start}.msgGroup.mine{margin-left:0;margin-right:auto}.msgGroup.mine summary{text-align:left}.mine .bubble{border-bottom-right-radius:15px;border-bottom-left-radius:4px;position:relative}.their .bubble{position:relative}.sticker-panel{display:none;max-height:150px;overflow:auto;padding:7px;border:1px solid var(--line);border-radius:13px;background:#080808}.sticker-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;color:var(--muted);font-size:10px}.sticker-list button{background:#151515;color:#fff;border-color:#282828;margin:3px;padding:7px 8px;min-width:58px;border-radius:10px;font-size:20px}.stickerText{font-size:26px;line-height:1.2}.loveQuick{font-size:10px;color:#ffd6e8;margin-left:4px}
 
+    /* WhatsApp-style: हर message अलग-अलग दिखेगा, user-wise group नहीं होगा. Heart/super effects removed. */
+    .heartBurst,.heartParticle,.loveRain,.loveDrop{display:none!important;animation:none!important}
+    .senderLine{font-weight:900;color:var(--muted);margin-top:2px}
+
   </style>
 </head>
 <body>
@@ -154,14 +158,7 @@
       currentRef.on("value", currentListener, err => { setStatus("Database rules/config error", "bad"); box.innerHTML='<div class="empty">Firebase Database rules check करें.</div>'; console.error(err); });
     }
 
-    function groupMessages(msgs){
-      const groups = [];
-      msgs.forEach(m => {
-        const last = groups[groups.length - 1];
-        if(last && last.user === m.user) last.items.push(m); else groups.push({user:m.user, items:[m]});
-      });
-      return groups;
-    }
+    function groupMessages(msgs){ return msgs; }
 
     function renderMessages(msgs){
       const box = document.getElementById("messages");
@@ -169,19 +166,14 @@
       if(!msgs.length){ lastMsgTotal = 0; box.innerHTML = '<div class="empty">♡ अभी कोई मैसेज नहीं है<br>पहला मैसेज भेजें...</div>'; return; }
       const newCount = Math.max(0, msgs.length - lastMsgTotal);
       const countHtml = newCount > 0 && lastMsgTotal > 0 ? `<div class="newCount">${newCount} new message${newCount>1?'s':''} ↓</div>` : "";
-      box.innerHTML = countHtml + groupMessages(msgs).map(g => {
-        const mine = g.user === currentUser;
-        const lastTime = g.items[g.items.length-1].time || Date.now();
-        const body = g.items.map(m => {
-          let content = "";
-          if(m.text) content += escapeHtml(m.text);
-          if(m.image) content += `<img src="${m.image}" alt="sent image">`;
-          if(m.audio) content += `<audio controls src="${m.audio}"></audio>`;
-          if(m.sticker) content += `<div class="stickerText">${escapeHtml(m.sticker)}</div>`;
-          const rain = (mine && Date.now() - (m.time||0) < 10000) ? `<div class="loveRain">${Array.from({length:22}).map((_,i)=>`<span class="loveDrop" style="left:${Math.random()*92}%;animation-delay:${Math.random()*1.2}s">${['❤️','💕','💖','💘','💞'][i%5]}</span>`).join("")}</div>` : "";
-          return `<div class="msg ${mine?'mine':'theirs'}"><div class="bubble">${content}${rain}</div><div class="meta">${new Date(m.time||Date.now()).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</div></div>`;
-        }).join("");
-        return `<details class="msgGroup ${mine?'mine':'theirs'}" open><summary><span class="senderName">${escapeHtml(g.user||'')}</span> <span class="groupCount">(${g.items.length}) • ${new Date(lastTime).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</span></summary>${body}</details>`;
+      box.innerHTML = countHtml + msgs.map(m => {
+        const mine = m.user === currentUser;
+        let content = "";
+        if(m.text) content += escapeHtml(m.text);
+        if(m.image) content += `<img src="${m.image}" alt="sent image">`;
+        if(m.audio) content += `<audio controls src="${m.audio}"></audio>`;
+        if(m.sticker) content += `<div class="stickerText">${escapeHtml(m.sticker)}</div>`;
+        return `<div class="msg ${mine?'mine':'theirs'}"><div class="meta senderLine">${escapeHtml(m.user||'')}</div><div class="bubble">${content}</div><div class="meta">${new Date(m.time||Date.now()).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</div></div>`;
       }).join("");
       if(wasNearBottom || newCount) box.scrollTop = box.scrollHeight;
       lastMsgTotal = msgs.length;
@@ -240,27 +232,15 @@
     }
 
     function loginOnEnter(e){ if(e.key === "Enter"){ e.preventDefault(); login(); } }
-    function heartBlast(){
-      const wrap = document.createElement("div"); wrap.className = "heartBurst"; document.body.appendChild(wrap);
-      const icons = ["❤️","💖","💕","💘","💝","💞","🌹","💋"];
-      for(let i=0;i<48;i++){
-        const sp = document.createElement("span"); sp.className = "heartParticle"; sp.textContent = icons[i%icons.length];
-        sp.style.left = "50%"; sp.style.top = "50%";
-        sp.style.setProperty("--x", (Math.random()*760-380)+"px");
-        sp.style.setProperty("--y", (Math.random()*520-260)+"px");
-        sp.style.setProperty("--r", (Math.random()*720-360)+"deg");
-        sp.style.animationDelay = (Math.random()*.18)+"s"; wrap.appendChild(sp);
-      }
-      setTimeout(()=>wrap.remove(), 2100);
-    }
+    function heartBlast(){ /* heart effect removed */ }
     function profileKey(){ return "akUrProfile_" + currentUser; }
     function loadProfilePic(){ const img=document.getElementById("myAvatar"); const saved=localStorage.getItem(profileKey()); img.src = saved || "data:image/svg+xml;utf8," + encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80'><rect width='100%' height='100%' fill='black'/><text x='50%' y='56%' font-size='34' fill='white' text-anchor='middle' font-family='Arial'>${currentUser||''}</text></svg>`); }
-    function updateProfilePic(ev){ const f=ev.target.files[0]; if(!f) return; if(f.size>900000){ alert("Profile photo 900KB से कम रखें."); ev.target.value=""; return; } const r=new FileReader(); r.onload=()=>{ localStorage.setItem(profileKey(), r.result); loadProfilePic(); heartBlast(); }; r.readAsDataURL(f); }
+    function updateProfilePic(ev){ const f=ev.target.files[0]; if(!f) return; if(f.size>900000){ alert("Profile photo 900KB से कम रखें."); ev.target.value=""; return; } const r=new FileReader(); r.onload=()=>{ localStorage.setItem(profileKey(), r.result); loadProfilePic(); }; r.readAsDataURL(f); }
     function toggleStickers(){ const p=document.getElementById("stickerPanel"); p.style.display = p.style.display === "block" ? "none" : "block"; }
     function closeStickers(){ document.getElementById("stickerPanel").style.display = "none"; }
     async function sendSticker(st){
       const msg = {user:currentUser, text:"", sticker:st, image:"", audio:"", time:Date.now()};
-      try{ if(firebaseOK) await db.ref(path()+"/messages").push(msg); else { const arr=getLocalMessages(); arr.push({...msg,id:String(Date.now())}); setLocalMessages(arr); renderMessages(arr); } heartBlast(); closeStickers(); }
+      try{ if(firebaseOK) await db.ref(path()+"/messages").push(msg); else { const arr=getLocalMessages(); arr.push({...msg,id:String(Date.now())}); setLocalMessages(arr); renderMessages(arr); } closeStickers(); }
       catch(e){ alert("Sticker send नहीं हुआ. Firebase config/rules check करें."); console.error(e); }
     }
 
