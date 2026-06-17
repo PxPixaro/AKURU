@@ -25,6 +25,11 @@
     .composer{background:rgba(10,10,10,.94);border:1px solid var(--line);border-radius:8px 8px 18px 18px;padding:8px;display:grid;gap:7px;backdrop-filter:blur(12px)}textarea{min-height:43px;max-height:110px;resize:vertical;margin:0;font-size:11px;line-height:1.35}.row{display:flex;gap:5px;align-items:center;flex-wrap:wrap}.grow{flex:1}.tool{width:auto;min-width:36px;padding:8px;border-radius:11px}.send{min-width:78px}.hint{font-size:10px;color:var(--muted)}.fileName{color:#fff}.emoji-panel{display:none;max-height:125px;overflow:auto;padding:7px;border:1px solid var(--line);border-radius:13px;background:#080808}.emoji-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;color:var(--muted);font-size:10px}.emoji-close{padding:4px 8px!important;min-width:auto!important;border-radius:9px!important}.emoji-list button{background:#151515;color:#fff;border-color:#282828;margin:2px;padding:5px;min-width:28px;border-radius:8px;font-size:13px}
     .setup{display:none;background:#150b0b;border:1px solid #613333;color:#ffdede;border-radius:12px;padding:9px;font-size:10px;line-height:1.4}.setup b{color:#fff}
     @media(max-width:460px){.app{height:100%;width:100%;margin:0;padding:0}.topbar,.composer{border-radius:0}.bubble img{max-width:170px}.actions button,.actions input{font-size:9px}.login-card{padding:20px}}
+
+    .profileWrap{display:flex;align-items:center;gap:8px}.avatar{width:34px;height:34px;border-radius:50%;object-fit:cover;border:2px solid #fff;background:#1a1a1a;box-shadow:0 0 12px rgba(255,255,255,.18)}.profileBtn{position:relative;overflow:hidden}.profileBtn input{display:none}.heartBurst{position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden}.heartParticle{position:absolute;font-size:18px;animation:heartPop 1.6s ease-out forwards;filter:drop-shadow(0 4px 8px rgba(0,0,0,.35))}@keyframes heartPop{0%{transform:translate(-50%,-50%) scale(.2);opacity:0}15%{opacity:1}100%{transform:translate(var(--x),var(--y)) scale(1.4) rotate(var(--r));opacity:0}}
+    .login-card button:hover{box-shadow:0 0 28px rgba(255,105,180,.75),0 0 55px rgba(255,0,90,.35);transform:translateY(-1px)}.login-card button{transition:.22s ease}.loveRain{position:absolute;inset:0;pointer-events:none;overflow:hidden;border-radius:15px}.loveDrop{position:absolute;top:-12px;font-size:12px;animation:loveFall 10s linear forwards;opacity:.95}@keyframes loveFall{to{transform:translateY(78px) rotate(360deg);opacity:0}}
+    .msg.mine{align-items:flex-start}.msgGroup.mine{margin-left:0;margin-right:auto}.msgGroup.mine summary{text-align:left}.mine .bubble{border-bottom-right-radius:15px;border-bottom-left-radius:4px;position:relative}.their .bubble{position:relative}.sticker-panel{display:none;max-height:150px;overflow:auto;padding:7px;border:1px solid var(--line);border-radius:13px;background:#080808}.sticker-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;color:var(--muted);font-size:10px}.sticker-list button{background:#151515;color:#fff;border-color:#282828;margin:3px;padding:7px 8px;min-width:58px;border-radius:10px;font-size:20px}.stickerText{font-size:26px;line-height:1.2}.loveQuick{font-size:10px;color:#ffd6e8;margin-left:4px}
+
   </style>
 </head>
 <body>
@@ -35,8 +40,8 @@
       <div class="logo">♡♡</div>
       <h1 class="title">AK और UR Chat</h1>
       <div class="sub">Private black & white romantic chat<br>Username: <b>AK</b> या <b>UR</b><br>Password: AK=<b>2006</b>, UR=<b>2810</b></div>
-      <input id="username" placeholder="Username: AK या UR" autocomplete="username" />
-      <input id="password" type="password" placeholder="Password" autocomplete="current-password" />
+      <input id="username" placeholder="Username: AK या UR" autocomplete="username" onkeydown="loginOnEnter(event)" />
+      <input id="password" type="password" placeholder="Password" autocomplete="current-password" onkeydown="loginOnEnter(event)" />
       <button style="width:100%;margin-top:8px" onclick="login()">Login ♡</button>
       <div class="err" id="loginErr"></div>
     </div>
@@ -44,11 +49,15 @@
 
   <main class="app" id="app">
     <header class="topbar">
-      <div>
-        <div class="who">♡ <span id="me"></span> की Chat</div>
-        <div class="status" id="netStatus">Starting...</div>
+      <div class="profileWrap">
+        <img id="myAvatar" class="avatar" alt="profile" />
+        <div>
+          <div class="who">♡ <span id="me"></span> की Chat</div>
+          <div class="status" id="netStatus">Starting...</div>
+        </div>
       </div>
       <div class="actions">
+        <label class="secondary profileBtn" style="cursor:pointer;padding:7px 8px;border-radius:10px;font-size:10px">Profile 📷<input id="profileInput" type="file" accept="image/*" onchange="updateProfilePic(event)" /></label>
         <input type="date" id="chatDate" onchange="watchMessages()" />
         <button class="secondary" onclick="manualClear()">Clear</button>
         <button class="secondary" onclick="logout()">Logout</button>
@@ -62,9 +71,11 @@
         <b>Firebase config missing.</b> Same phone पर test चलेगा, लेकिन दूसरे phone पर messages भेजने के लिए code में <b>firebaseConfig</b> की real values paste करनी होंगी.
       </div>
       <div class="emoji-panel" id="emojiPanel"></div>
+      <div class="sticker-panel" id="stickerPanel"></div>
       <textarea id="text" maxlength="5000" placeholder="Message लिखें... Enter = Send, Shift+Enter = New line"></textarea>
       <div class="row">
         <button class="tool secondary" onclick="toggleEmoji()">😊</button>
+        <button class="tool secondary" onclick="toggleStickers()">💌</button>
         <label class="tool secondary" style="cursor:pointer;text-align:center">🖼️<input id="imageInput" type="file" accept="image/*" hidden onchange="pickImage(event)" /></label>
         <button id="voiceBtn" class="tool secondary" onclick="toggleRecording()">🎙️</button>
         <span class="hint grow"><span id="count">0</span>/5000 <span id="picked" class="fileName"></span></span>
@@ -91,7 +102,9 @@
     if(currentUser === "AKA") currentUser = "AK";
     let db = null, firebaseOK = false, currentRef = null, currentListener = null, lastMsgTotal = 0;
     let imageData = "", audioData = "", mediaRecorder = null, audioChunks = [];
-    const emojis = "😀 😃 😄 😁 😆 😂 🤣 😊 😍 🥰 😘 😗 😙 😚 😉 😌 🤗 🤭 😋 😜 🤪 😝 😎 🥳 🥺 😢 😭 😡 😴 ❤️ 🧡 💛 💚 💙 💜 🤎 🖤 🤍 💘 💝 💖 💗 💓 💞 💕 💟 ❣️ 💔 💋 💌 🌹 🥀 🌺 🌸 🌼 🌻 ⭐ 🌙 ☀️ 🌈 🔥 ✨ 🎉 🎊 🎁 👋 👍 👎 🙏 👏 🙌 🤝 💪 👀 👄 👩‍❤️‍👨 💏 💑 🐦 🕊️ 🦢 🍫 🎂 ☕ 🍕 📱 🎵 🎶 🎧".split(/\s+/);
+    const emojis = "❤️ 💖 💗 💓 💞 💕 💘 💝 💟 ❣️ 💋 💌 🌹 🥰 😍 😘 🫶 💑 💏 👩‍❤️‍👨 💐 ✨ 😀 😃 😄 😁 😆 😂 🤣 😊 😍 🥰 😘 😗 😙 😚 😉 😌 🤗 🤭 😋 😜 🤪 😝 😎 🥳 🥺 😢 😭 😡 😴 ❤️ 🧡 💛 💚 💙 💜 🤎 🖤 🤍 💘 💝 💖 💗 💓 💞 💕 💟 ❣️ 💔 💋 💌 🌹 🥀 🌺 🌸 🌼 🌻 ⭐ 🌙 ☀️ 🌈 🔥 ✨ 🎉 🎊 🎁 👋 👍 👎 🙏 👏 🙌 🤝 💪 👀 👄 👩‍❤️‍👨 💏 💑 🐦 🕊️ 🦢 🍫 🎂 ☕ 🍕 📱 🎵 🎶 🎧".split(/\s+/);
+
+    const loveStickers = ["❤️ I Love You ❤️", "💖 Love You जान 💖", "🥰 Miss You 🥰", "😘 Kiss 😘", "🌹 For You 🌹", "💞 Forever 💞", "💌 પ્રેમ 💌", "❤️ હું તને પ્રેમ કરું છું ❤️", "💖 મિસ યુ 💖", "🌹 મારા દિલમાં તું 🌹", "💘 आई लव यू 💘", "💞 मेरी जान 💞", "💕 तुम खास हो 💕", "💝 Only You 💝", "💓 Dil Se Love 💓", "💑 AK♡UR 💑", "🫶 Love Love 🫶", "💋 Sweet Kiss 💋", "💐 मेरी मोहब्बत 💐", "✨ Full Love ✨"];
 
     function today(){ return new Date().toISOString().slice(0,10); }
     function path(){ return "akaUrChat/" + document.getElementById("chatDate").value; }
@@ -109,7 +122,8 @@
 
     function init(){
       document.getElementById("chatDate").value = today();
-      document.getElementById("emojiPanel").innerHTML = `<div class="emoji-head"><b>Emoji</b><button class="secondary emoji-close" onclick="closeEmoji()">Close ✕</button></div><div class="emoji-list">${emojis.map(e => `<button onclick="addEmoji('${e}')">${e}</button>`).join("")}</div>`;
+      document.getElementById("emojiPanel").innerHTML = `<div class="emoji-head"><b>Love Emoji</b><button class="secondary emoji-close" onclick="closeEmoji()">Close ✕</button></div><div class="emoji-list">${emojis.map(e => `<button onclick="addEmoji('${e}')">${e}</button>`).join("")}</div>`;
+      document.getElementById("stickerPanel").innerHTML = `<div class="sticker-head"><b>Love Stickers / स्टिकर / સ્ટિકર</b><button class="secondary emoji-close" onclick="closeStickers()">Close ✕</button></div><div class="sticker-list">${loveStickers.map(st => `<button onclick="sendSticker('${st.replace(/'/g,"\\'")}')">${st}</button>`).join("")}</div>`;
       const textEl = document.getElementById("text");
       textEl.addEventListener("input", e => document.getElementById("count").textContent = e.target.value.length);
       textEl.addEventListener("keydown", e => { if(e.key === "Enter" && !e.shiftKey){ e.preventDefault(); sendMessage(); } });
@@ -121,10 +135,10 @@
     function login(){
       const u = document.getElementById("username").value.trim().toUpperCase();
       const p = document.getElementById("password").value.trim();
-      if(USERS[u] && USERS[u] === p){ currentUser = u; sessionStorage.setItem("akUrUser", u); showApp(); }
+      if(USERS[u] && USERS[u] === p){ currentUser = u; sessionStorage.setItem("akUrUser", u); heartBlast(); setTimeout(showApp, 420); }
       else document.getElementById("loginErr").textContent = "गलत username या password";
     }
-    function showApp(){ document.getElementById("loginScreen").style.display="none"; document.getElementById("app").style.display="grid"; document.getElementById("me").textContent=currentUser; watchMessages(); }
+    function showApp(){ document.getElementById("loginScreen").style.display="none"; document.getElementById("app").style.display="grid"; document.getElementById("me").textContent=currentUser; loadProfilePic(); watchMessages(); }
     function logout(){ sessionStorage.removeItem("akUrUser"); sessionStorage.removeItem("akaUrUser"); location.reload(); }
 
     function localKey(){ return path() + "/messages"; }
@@ -167,7 +181,9 @@
           if(m.text) content += escapeHtml(m.text);
           if(m.image) content += `<img src="${m.image}" alt="sent image">`;
           if(m.audio) content += `<audio controls src="${m.audio}"></audio>`;
-          return `<div class="msg ${mine?'mine':'theirs'}"><div class="bubble">${content}</div><div class="meta">${new Date(m.time||Date.now()).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</div></div>`;
+          if(m.sticker) content += `<div class="stickerText">${escapeHtml(m.sticker)}</div>`;
+          const rain = (mine && Date.now() - (m.time||0) < 10000) ? `<div class="loveRain">${Array.from({length:22}).map((_,i)=>`<span class="loveDrop" style="left:${Math.random()*92}%;animation-delay:${Math.random()*1.2}s">${['❤️','💕','💖','💘','💞'][i%5]}</span>`).join("")}</div>` : "";
+          return `<div class="msg ${mine?'mine':'theirs'}"><div class="bubble">${content}${rain}</div><div class="meta">${new Date(m.time||Date.now()).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</div></div>`;
         }).join("");
         return `<details class="msgGroup ${mine?'mine':'theirs'}" open><summary><span class="senderName">${escapeHtml(g.user||'')}</span> <span class="groupCount">(${g.items.length}) • ${new Date(lastTime).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</span></summary>${body}</details>`;
       }).join("");
@@ -221,6 +237,32 @@
         mediaRecorder.start(); btn.textContent="⏹️";
       }catch(e){ alert("Mic permission allow करें. Recording HTTPS पर चलेगी."); }
     }
+
+    function loginOnEnter(e){ if(e.key === "Enter"){ e.preventDefault(); login(); } }
+    function heartBlast(){
+      const wrap = document.createElement("div"); wrap.className = "heartBurst"; document.body.appendChild(wrap);
+      const icons = ["❤️","💖","💕","💘","💝","💞","🌹","💋"];
+      for(let i=0;i<48;i++){
+        const sp = document.createElement("span"); sp.className = "heartParticle"; sp.textContent = icons[i%icons.length];
+        sp.style.left = "50%"; sp.style.top = "50%";
+        sp.style.setProperty("--x", (Math.random()*760-380)+"px");
+        sp.style.setProperty("--y", (Math.random()*520-260)+"px");
+        sp.style.setProperty("--r", (Math.random()*720-360)+"deg");
+        sp.style.animationDelay = (Math.random()*.18)+"s"; wrap.appendChild(sp);
+      }
+      setTimeout(()=>wrap.remove(), 2100);
+    }
+    function profileKey(){ return "akUrProfile_" + currentUser; }
+    function loadProfilePic(){ const img=document.getElementById("myAvatar"); const saved=localStorage.getItem(profileKey()); img.src = saved || "data:image/svg+xml;utf8," + encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80'><rect width='100%' height='100%' fill='black'/><text x='50%' y='56%' font-size='34' fill='white' text-anchor='middle' font-family='Arial'>${currentUser||'♡'}</text></svg>`); }
+    function updateProfilePic(ev){ const f=ev.target.files[0]; if(!f) return; if(f.size>900000){ alert("Profile photo 900KB से कम रखें."); ev.target.value=""; return; } const r=new FileReader(); r.onload=()=>{ localStorage.setItem(profileKey(), r.result); loadProfilePic(); heartBlast(); }; r.readAsDataURL(f); }
+    function toggleStickers(){ const p=document.getElementById("stickerPanel"); p.style.display = p.style.display === "block" ? "none" : "block"; }
+    function closeStickers(){ document.getElementById("stickerPanel").style.display = "none"; }
+    async function sendSticker(st){
+      const msg = {user:currentUser, text:"", sticker:st, image:"", audio:"", time:Date.now()};
+      try{ if(firebaseOK) await db.ref(path()+"/messages").push(msg); else { const arr=getLocalMessages(); arr.push({...msg,id:String(Date.now())}); setLocalMessages(arr); renderMessages(arr); } heartBlast(); closeStickers(); }
+      catch(e){ alert("Sticker send नहीं हुआ. Firebase config/rules check करें."); console.error(e); }
+    }
+
     init();
   </script>
 </body>
