@@ -56,6 +56,15 @@
     .stickerText{font-size:18px;line-height:1.2}
     @media(max-width:460px){.msg .bubble{max-width:80%;font-size:10px;padding:6px 8px}.emoji-list button{font-size:10.5px;min-width:21px}.stickerText{font-size:16px}}
 
+
+    /* Updated: WhatsApp-style flat chronological list, no user grouping/accordion */
+    details.msgGroup{display:contents!important}
+    .messages{display:flex!important;flex-direction:column!important;gap:6px!important;align-items:stretch!important}
+    .messages>.msg{width:100%!important;display:flex!important;flex-direction:column!important;margin:0!important;clear:both!important}
+    .messages>.msg.mine{align-items:flex-end!important;margin-left:0!important}
+    .messages>.msg.theirs{align-items:flex-start!important;margin-right:0!important}
+    .messages>.msg .bubble{max-width:78%!important;display:block!important}
+
   </style>
 </head>
 <body>
@@ -151,7 +160,7 @@
       textEl.addEventListener("keydown", e => { if(e.key === "Enter" && !e.shiftKey){ e.preventDefault(); sendMessage(); } });
       initFirebase(); if(currentUser && USERS[currentUser]) showApp();
       setInterval(() => { if(document.getElementById("chatDate").value !== today()){ document.getElementById("chatDate").value = today(); watchMessages(); } }, 60000);
-      setInterval(autoClear, 10000);
+      setInterval(autoClear, 5000);
     }
 
     function login(){
@@ -220,14 +229,33 @@
       if(firebaseOK) await db.ref(path()).remove(); else { localStorage.removeItem(localKey()); renderMessages([]); }
     }
     async function autoClear(){
+      const now = Date.now();
+      const limit = 60 * 1000;
+
+      // Local/offline mode: सिर्फ वही messages हटेंगे जो 1 minute old हो चुके हैं.
+      // अभी-अभी भेजे हुए messages रहेंगे, पूरी chat एक साथ clear नहीं होगी.
       if(!firebaseOK){
-        const key = "akaUrChatMeta_lastClear";
-        const lastLocal = Number(localStorage.getItem(key) || 0);
-        if(Date.now() - lastLocal >= 60*1000){ localStorage.removeItem(localKey()); localStorage.setItem(key, String(Date.now())); renderMessages([]); }
+        const arr = getLocalMessages();
+        const fresh = arr.filter(m => now - Number(m.time || now) < limit);
+        if(fresh.length !== arr.length){
+          setLocalMessages(fresh);
+          renderMessages(fresh);
+        }
         return;
       }
-      const meta = db.ref("akaUrChatMeta/lastClear"); const snap = await meta.get(); const last = Number(snap.val() || 0);
-      if(Date.now() - last >= 60*1000){ await db.ref("akaUrChat/" + today()).remove(); await meta.set(Date.now()); }
+
+      // Firebase mode: हर message को उसके own timestamp से check करके delete करो.
+      // Global timer से पूरी chat delete नहीं होगी.
+      try{
+        const ref = db.ref(path()+"/messages");
+        const snap = await ref.get();
+        const updates = {};
+        snap.forEach(child => {
+          const m = child.val() || {};
+          if(now - Number(m.time || now) >= limit) updates[child.key] = null;
+        });
+        if(Object.keys(updates).length) await ref.update(updates);
+      }catch(e){ console.error("Auto clear failed", e); }
     }
     function toggleEmoji(){ const p=document.getElementById("emojiPanel"); p.style.display = p.style.display === "block" ? "none" : "block"; }
     function closeEmoji(){ document.getElementById("emojiPanel").style.display = "none"; }
