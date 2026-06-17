@@ -8,7 +8,7 @@
     :root{
       --bg:#050505; --panel:#111; --panel2:#191919; --text:#fff; --muted:#bdbdbd;
       --line:#2c2c2c; --soft:#f2f2f2; --mine:#fff; --mineText:#000; --theirs:#1f1f1f;
-      --shadow:0 20px 60px rgba(255,255,255,.08);
+      --shadow:0 20px 60px rgba(255,255,255,.08); --ok:#9cffb1; --bad:#ff9c9c;
     }
     *{box-sizing:border-box}
     body{
@@ -20,92 +20,41 @@
       overflow:hidden;
     }
     .birds{position:fixed; inset:0; pointer-events:none; opacity:.22}
-    .birds:before,.birds:after{
-      content:"♡"; position:absolute; font-size:18rem; color:white; filter:blur(.3px);
-      animation:float 9s ease-in-out infinite;
-    }
+    .birds:before,.birds:after{content:"♡"; position:absolute; font-size:18rem; color:white; filter:blur(.3px); animation:float 9s ease-in-out infinite}
     .birds:before{left:-35px; top:30px; transform:rotate(-18deg)}
     .birds:after{right:-30px; bottom:10px; transform:rotate(17deg); animation-delay:-3s}
     @keyframes float{50%{translate:0 -18px; opacity:.45}}
-
     .login, .app{position:relative; z-index:2}
-    .login{
-      min-height:100vh; display:grid; place-items:center; padding:24px;
-    }
-    .login-card{
-      width:min(440px, 100%); padding:34px; border:1px solid var(--line); border-radius:28px;
-      background:rgba(10,10,10,.86); backdrop-filter:blur(14px); box-shadow:var(--shadow);
-    }
+    .login{min-height:100vh; display:grid; place-items:center; padding:24px}
+    .login-card{width:min(440px,100%); padding:34px; border:1px solid var(--line); border-radius:28px; background:rgba(10,10,10,.86); backdrop-filter:blur(14px); box-shadow:var(--shadow)}
     .logo{font-size:54px; text-align:center; letter-spacing:8px; margin-bottom:4px}
-    h1{margin:0; text-align:center; font-size:28px}
-    .sub{color:var(--muted); text-align:center; margin:10px 0 26px; line-height:1.5}
-    input, textarea, select, button{
-      font:inherit; border-radius:16px; border:1px solid var(--line); outline:none;
-    }
-    input, textarea, select{
-      width:100%; background:#050505; color:white; padding:15px 16px; margin:8px 0;
-    }
-    button{
-      cursor:pointer; background:white; color:#000; padding:13px 16px; font-weight:800;
-      transition:.2s transform,.2s opacity; border-color:white;
-    }
-    button:hover{transform:translateY(-1px)}
-    button.secondary{background:#111;color:#fff;border-color:#3a3a3a}
-    button.danger{background:#fff;color:#000;border-color:#fff}
+    h1{margin:0; text-align:center; font-size:28px}.sub{color:var(--muted); text-align:center; margin:10px 0 26px; line-height:1.5}
+    input,textarea,select,button{font:inherit; border-radius:16px; border:1px solid var(--line); outline:none}
+    input,textarea,select{width:100%; background:#050505; color:white; padding:15px 16px; margin:8px 0}
+    button{cursor:pointer; background:white; color:#000; padding:13px 16px; font-weight:800; transition:.2s transform,.2s opacity; border-color:white}
+    button:hover{transform:translateY(-1px)} button.secondary{background:#111;color:#fff;border-color:#3a3a3a} button:disabled{opacity:.5;cursor:not-allowed;transform:none}
     .err{min-height:22px;color:#fff;text-align:center;margin-top:10px}
-
     .app{height:100vh; display:none; grid-template-rows:auto 1fr auto; max-width:980px; margin:0 auto; padding:14px}
-    .topbar{
-      display:flex; gap:10px; align-items:center; justify-content:space-between;
-      padding:14px 16px; background:rgba(10,10,10,.9); border:1px solid var(--line);
-      border-radius:22px 22px 10px 10px; backdrop-filter:blur(12px);
-    }
-    .who{font-weight:900}.status{color:var(--muted); font-size:13px}
-    .actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
-    .actions button{padding:9px 11px;border-radius:12px;font-size:13px}
-    .messages{
-      overflow:auto; padding:18px; background:rgba(255,255,255,.035);
-      border-left:1px solid var(--line); border-right:1px solid var(--line);
-      scroll-behavior:smooth;
-    }
-    .empty{text-align:center;color:var(--muted);margin-top:22vh;line-height:1.7}
-    .msg{max-width:76%; margin:10px 0; display:flex; flex-direction:column; gap:6px}
-    .msg.mine{margin-left:auto; align-items:flex-end}
-    .bubble{
-      padding:12px 14px; border-radius:20px; line-height:1.45; white-space:pre-wrap; word-break:break-word;
-      box-shadow:0 8px 24px rgba(0,0,0,.25);
-    }
-    .mine .bubble{background:var(--mine);color:var(--mineText);border-bottom-right-radius:5px}
-    .theirs .bubble{background:var(--theirs);color:white;border:1px solid #303030;border-bottom-left-radius:5px}
-    .meta{font-size:11px;color:var(--muted);padding:0 6px}
-    .bubble img{max-width:260px; border-radius:14px; display:block}
-    audio{width:260px; max-width:100%}
-    .composer{
-      background:rgba(10,10,10,.92); border:1px solid var(--line); border-radius:10px 10px 22px 22px;
-      padding:12px; display:grid; gap:10px; backdrop-filter:blur(12px);
-    }
-    textarea{min-height:78px; max-height:210px; resize:vertical; margin:0; line-height:1.45}
-    .row{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
-    .row .grow{flex:1}
-    .tool{width:auto; min-width:46px; padding:12px; border-radius:14px}
-    .send{min-width:120px}
-    .emoji-panel{
-      display:none; max-height:170px; overflow:auto; padding:10px; border:1px solid var(--line);
-      border-radius:16px; background:#080808;
-    }
-    .emoji-panel button{background:#151515;color:white;border-color:#282828;margin:3px;padding:7px;min-width:34px;border-radius:10px}
-    .hint{font-size:12px;color:var(--muted)}
-    .fileName{font-size:12px;color:#fff}
+    .topbar{display:flex; gap:10px; align-items:center; justify-content:space-between; padding:14px 16px; background:rgba(10,10,10,.9); border:1px solid var(--line); border-radius:22px 22px 10px 10px; backdrop-filter:blur(12px)}
+    .who{font-weight:900}.status{color:var(--muted); font-size:13px}.status.ok{color:var(--ok)}.status.bad{color:var(--bad)}
+    .actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.actions button{padding:9px 11px;border-radius:12px;font-size:13px}
+    .messages{overflow:auto; padding:18px; background:rgba(255,255,255,.035); border-left:1px solid var(--line); border-right:1px solid var(--line); scroll-behavior:smooth}
+    .empty{text-align:center;color:var(--muted);margin-top:22vh;line-height:1.7}.msg{max-width:76%; margin:10px 0; display:flex; flex-direction:column; gap:6px}.msg.mine{margin-left:auto; align-items:flex-end}
+    .bubble{padding:12px 14px; border-radius:20px; line-height:1.45; white-space:pre-wrap; word-break:break-word; box-shadow:0 8px 24px rgba(0,0,0,.25)}
+    .mine .bubble{background:var(--mine);color:var(--mineText);border-bottom-right-radius:5px}.theirs .bubble{background:var(--theirs);color:white;border:1px solid #303030;border-bottom-left-radius:5px}
+    .meta{font-size:11px;color:var(--muted);padding:0 6px}.bubble img{max-width:260px; border-radius:14px; display:block}audio{width:260px; max-width:100%}
+    .composer{background:rgba(10,10,10,.92); border:1px solid var(--line); border-radius:10px 10px 22px 22px; padding:12px; display:grid; gap:10px; backdrop-filter:blur(12px)}
+    textarea{min-height:78px; max-height:210px; resize:vertical; margin:0; line-height:1.45}.row{display:flex; gap:8px; align-items:center; flex-wrap:wrap}.row .grow{flex:1}.tool{width:auto; min-width:46px; padding:12px; border-radius:14px}.send{min-width:120px}
+    .emoji-panel{display:none; max-height:170px; overflow:auto; padding:10px; border:1px solid var(--line); border-radius:16px; background:#080808}.emoji-panel button{background:#151515;color:white;border-color:#282828;margin:3px;padding:7px;min-width:34px;border-radius:10px}
+    .hint{font-size:12px;color:var(--muted)}.fileName{font-size:12px;color:#fff}
     @media(max-width:650px){.app{padding:0}.topbar,.composer{border-radius:0}.msg{max-width:90%}.actions button{font-size:12px}.bubble img{max-width:210px}}
   </style>
 </head>
 <body>
   <div class="birds"></div>
-
   <section class="login" id="loginScreen">
     <div class="login-card">
-      <div class="logo">♡♡</div>
-      <h1>Love Birds Chat</h1>
+      <div class="logo">♡♡</div><h1>Love Birds Chat</h1>
       <div class="sub">Private black & white romantic chat<br>Users: <b>AKA</b> और <b>UR</b> | Password: <b>12345</b></div>
       <input id="username" placeholder="Username: AKA या UR" autocomplete="username">
       <input id="password" type="password" placeholder="Password" autocomplete="current-password">
@@ -113,149 +62,88 @@
       <div class="err" id="loginErr"></div>
     </div>
   </section>
-
   <main class="app" id="app">
     <header class="topbar">
-      <div>
-        <div class="who">♡ <span id="me"></span> की Chat</div>
-        <div class="status">Auto clear: हर 30 मिनट + नया दिन शुरू होते ही</div>
-      </div>
-      <div class="actions">
-        <input type="date" id="chatDate" style="width:150px;padding:8px;margin:0;border-radius:12px" onchange="loadMessages()">
-        <button class="secondary" onclick="manualClear()">Manual Clear</button>
-        <button class="secondary" onclick="logout()">Logout</button>
-      </div>
+      <div><div class="who">♡ <span id="me"></span> की Chat</div><div class="status" id="netStatus">Connecting...</div></div>
+      <div class="actions"><input type="date" id="chatDate" style="width:150px;padding:8px;margin:0;border-radius:12px" onchange="watchMessages()"><button class="secondary" onclick="manualClear()">Manual Clear</button><button class="secondary" onclick="logout()">Logout</button></div>
     </header>
-
     <section class="messages" id="messages"></section>
-
     <footer class="composer">
       <div class="emoji-panel" id="emojiPanel"></div>
-      <textarea id="text" maxlength="5000" placeholder="अपना मैसेज लिखें... 2-3 हजार characters आराम से लिख सकते हैं"></textarea>
-      <div class="row">
-        <button class="tool secondary" onclick="toggleEmoji()">😊</button>
-        <label class="tool secondary" style="cursor:pointer;text-align:center">
-          🖼️<input id="imageInput" type="file" accept="image/*" hidden onchange="pickImage(event)">
-        </label>
-        <button id="voiceBtn" class="tool secondary" onclick="toggleRecording()">🎙️</button>
-        <span class="hint grow"><span id="count">0</span>/5000 <span id="picked" class="fileName"></span></span>
-        <button class="send" onclick="sendMessage()">Send ♡</button>
-      </div>
+      <textarea id="text" maxlength="5000" placeholder="अपना मैसेज लिखें..."></textarea>
+      <div class="row"><button class="tool secondary" onclick="toggleEmoji()">😊</button><label class="tool secondary" style="cursor:pointer;text-align:center">🖼️<input id="imageInput" type="file" accept="image/*" hidden onchange="pickImage(event)"></label><button id="voiceBtn" class="tool secondary" onclick="toggleRecording()">🎙️</button><span class="hint grow"><span id="count">0</span>/5000 <span id="picked" class="fileName"></span></span><button class="send" id="sendBtn" onclick="sendMessage()">Send ♡</button></div>
     </footer>
   </main>
 
-<script>
-const USERS = { AKA:"12345", UR:"12345" };
-const channel = "BroadcastChannel" in window ? new BroadcastChannel("love_birds_chat") : null;
-let currentUser = sessionStorage.getItem("loveUser") || "";
-let imageData = "";
-let audioData = "";
-let mediaRecorder = null;
-let audioChunks = [];
-const emojis = `😀 😃 😄 😁 😆 😅 😂 🤣 😊 😇 🙂 🙃 😉 😌 😍 🥰 😘 😗 😙 😚 😋 😛 😜 🤪 😝 🤑 🤗 🤭 🤫 🤔 🤐 🤨 😐 😑 😶 😏 😒 🙄 😬 🤥 😔 😪 🤤 😴 😷 🤒 🤕 🤢 🤮 🤧 🥵 🥶 🥴 😵 🤯 🤠 🥳 😎 🤓 🧐 😕 😟 🙁 ☹️ 😮 😯 😲 😳 🥺 😦 😧 😨 😰 😥 😢 😭 😱 😖 😣 😞 😓 😩 😫 🥱 😤 😡 😠 🤬 😈 👿 💀 ☠️ 💩 🤡 👹 👺 👻 👽 🤖 😺 😸 😹 😻 😼 😽 🙀 😿 😾 🙈 🙉 🙊 💋 💌 💘 💝 💖 💗 💓 💞💕 💟 ❣️ 💔 ❤️ 🧡 💛 💚 💙 💜 🤎 🖤 🤍 💯 💢 💥 💫 💦 💨 🕊️ 🦢 🐦 🐥 🌹 🥀 🌺 🌸 🌼 🌻 ⭐ 🌙 ☀️ 🌈 🔥 ✨ 🎉 🎊 🎁 👋 🤚 🖐️ ✋ 🖖 👌 🤌 🤏 ✌️ 🤞 🤟 🤘 🤙 👈 👉 👆 🖕 👇 ☝️ 👍 👎 ✊ 👊 🤛 🤜 👏 🙌 👐 🤲 🤝 🙏 ✍️ 💅 🤳 💪 🧠 👀 👄 👅 👶 👧 🧒 👦 👩 🧑 👨 👩‍❤️‍👨 👩‍❤️‍👩 👨‍❤️‍👨 💏 💑 🐶 🐱 🐭 🐹 🐰 🦊 🐻 🐼 🐨 🐯 🦁 🐮 🐷 🐸 🐵 🍎 🍓 🍒 🍫 🍰 🎂 ☕ 🍕 🚗 🏍️ ✈️ 🏠 📱 💻 📷 🎵 🎶 🎧 ⚽ 🏏`.split(/\s+/);
-
-function today(){ return new Date().toISOString().slice(0,10); }
-function key(){ return "loveChat_" + document.getElementById("chatDate").value; }
-function allKeys(){ return Object.keys(localStorage).filter(k=>k.startsWith("loveChat_")); }
-
-function init(){
-  document.getElementById("chatDate").value = today();
-  document.getElementById("emojiPanel").innerHTML = emojis.map(e=>`<button onclick="addEmoji('${e}')">${e}</button>`).join("");
-  document.getElementById("text").addEventListener("input", e=>document.getElementById("count").textContent=e.target.value.length);
-  if(currentUser) showApp();
-  setInterval(autoClear, 60*1000);
-  setInterval(()=>{ if(document.getElementById("chatDate").value !== today()) { document.getElementById("chatDate").value=today(); loadMessages(); }}, 60*1000);
-}
-function login(){
-  const u = document.getElementById("username").value.trim().toUpperCase();
-  const p = document.getElementById("password").value.trim();
-  if(USERS[u] && USERS[u] === p){ currentUser=u; sessionStorage.setItem("loveUser",u); showApp(); }
-  else document.getElementById("loginErr").textContent = "गलत username या password";
-}
-function showApp(){
-  document.getElementById("loginScreen").style.display="none";
-  document.getElementById("app").style.display="grid";
-  document.getElementById("me").textContent=currentUser;
-  loadMessages();
-}
-function logout(){ sessionStorage.removeItem("loveUser"); location.reload(); }
-function getMessages(){ try{return JSON.parse(localStorage.getItem(key())||"[]")}catch{return[]} }
-function saveMessages(arr){ localStorage.setItem(key(), JSON.stringify(arr)); notify(); }
-function notify(){ if(channel) channel.postMessage("refresh"); }
-if(channel) channel.onmessage = loadMessages;
-window.addEventListener("storage", e=>{ if(e.key && e.key.startsWith("loveChat_")) loadMessages(); });
-
-function loadMessages(){
-  const box = document.getElementById("messages");
-  const msgs = getMessages();
-  if(!msgs.length){ box.innerHTML = `<div class="empty">♡ अभी कोई मैसेज नहीं है<br>पहला प्यार भरा मैसेज भेजें...</div>`; return; }
-  box.innerHTML = msgs.map(m=>{
-    const mine = m.user === currentUser;
-    let content = "";
-    if(m.text) content += escapeHtml(m.text);
-    if(m.image) content += `<br><img src="${m.image}" alt="sent image">`;
-    if(m.audio) content += `<br><audio controls src="${m.audio}"></audio>`;
-    return `<div class="msg ${mine?'mine':'theirs'}"><div class="bubble">${content}</div><div class="meta">${m.user} • ${new Date(m.time).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</div></div>`;
-  }).join("");
-  box.scrollTop = box.scrollHeight;
-}
-function sendMessage(){
-  const textEl = document.getElementById("text");
-  const text = textEl.value.trim();
-  if(!text && !imageData && !audioData) return;
-  const msgs = getMessages();
-  msgs.push({user:currentUser, text, image:imageData, audio:audioData, time:Date.now()});
-  saveMessages(msgs);
-  textEl.value=""; document.getElementById("count").textContent="0";
-  imageData=""; audioData=""; document.getElementById("picked").textContent="";
-  document.getElementById("imageInput").value="";
-  loadMessages();
-}
-function manualClear(){
-  if(confirm("इस date की chat clear करनी है?")){ localStorage.removeItem(key()); notify(); loadMessages(); }
-}
-function autoClear(){
-  const now = Date.now();
-  allKeys().forEach(k=>{
-    const date = k.replace("loveChat_","");
-    if(date < today()) localStorage.removeItem(k);
-    else {
-      const last = Number(localStorage.getItem(k+"_lastClear") || 0);
-      if(now - last >= 30*60*1000){ localStorage.removeItem(k); localStorage.setItem(k+"_lastClear", String(now)); }
-    }
-  });
-  loadMessages(); notify();
-}
-function toggleEmoji(){ const p=document.getElementById("emojiPanel"); p.style.display = p.style.display==="block" ? "none" : "block"; }
-function addEmoji(e){ const t=document.getElementById("text"); t.value += e; t.focus(); document.getElementById("count").textContent=t.value.length; }
-function pickImage(ev){
-  const f = ev.target.files[0]; if(!f) return;
-  const r = new FileReader();
-  r.onload = () => { imageData = r.result; document.getElementById("picked").textContent = "Image ready ✓"; };
-  r.readAsDataURL(f);
-}
-async function toggleRecording(){
-  const btn = document.getElementById("voiceBtn");
-  if(mediaRecorder && mediaRecorder.state === "recording"){
-    mediaRecorder.stop(); btn.textContent="🎙️"; return;
-  }
-  try{
-    const stream = await navigator.mediaDevices.getUserMedia({audio:true});
-    audioChunks = [];
-    mediaRecorder = new MediaRecorder(stream);
-    mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
-    mediaRecorder.onstop = () => {
-      const blob = new Blob(audioChunks, {type:"audio/webm"});
-      const r = new FileReader();
-      r.onload = () => { audioData = r.result; document.getElementById("picked").textContent = "Voice ready ✓"; };
-      r.readAsDataURL(blob);
-      stream.getTracks().forEach(t=>t.stop());
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
+  <script>
+    // IMPORTANT: नीचे अपनी Firebase Realtime Database config paste करें.
+    // Firebase Console > Project Settings > Your apps > Web app config
+    const firebaseConfig = {
+      apiKey: "PASTE_YOUR_API_KEY",
+      authDomain: "PASTE_YOUR_PROJECT.firebaseapp.com",
+      databaseURL: "https://PASTE_YOUR_PROJECT-default-rtdb.firebaseio.com",
+      projectId: "PASTE_YOUR_PROJECT",
+      storageBucket: "PASTE_YOUR_PROJECT.appspot.com",
+      messagingSenderId: "PASTE_SENDER_ID",
+      appId: "PASTE_APP_ID"
     };
-    mediaRecorder.start(); btn.textContent="⏹️";
-  }catch(e){ alert("Mic permission allow करें। Voice recording Chrome में localhost/HTTPS/file पर permission मांग सकती है।"); }
-}
-function escapeHtml(s){ return s.replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c])); }
-init();
-</script>
+
+    const USERS = { AKA:"12345", UR:"12345" };
+    let currentUser = sessionStorage.getItem("loveUser") || "";
+    let imageData = "", audioData = "", mediaRecorder = null, audioChunks = [];
+    let db = null, currentRef = null, currentListener = null;
+    const emojis = `😀 😃 😄 😁 😆 😅 😂 🤣 😊 😇 🙂 🙃 😉 😌 😍 🥰 😘 😗 😙 😚 😋 😛 😜 🤪 😝 🤑 🤗 🤭 🤫 🤔 🤐 🤨 😐 😑 😶 😏 😒 🙄 😬 🤥 😔 😪 🤤 😴 😷 🤒 🤕 🤢 🤮 🤧 🥵 🥶 🥴 😵 🤯 🤠 🥳 😎 🤓 🧐 😕 😟 🙁 ☹️ 😮 😯 😲 😳 🥺 😦 😧 😨 😰 😥 😢 😭 😱 😖 😣 😞 😓 😩 😫 🥱 😤 😡 😠 🤬 😈 👿 💀 ☠️ 💩 🤡 👹 👺 👻 👽 🤖 😺 😸 😹 😻 😼 😽 🙀 😿 😾 🙈 🙉 🙊 💋 💌 💘 💝 💖 💗 💓 💞💕 💟 ❣️ 💔 ❤️ 🧡 💛 💚 💙 💜 🤎 🖤 🤍 💯 💢 💥 💫 💦 💨 🕊️ 🦢 🐦 🐥 🌹 🥀 🌺 🌸 🌼 🌻 ⭐ 🌙 ☀️ 🌈 🔥 ✨ 🎉 🎊 🎁 👋 🤚 🖐️ ✋ 🖖 👌 🤌 🤏 ✌️ 🤞 🤟 🤘 🤙 👈 👉 👆 🖕 👇 ☝️ 👍 👎 ✊ 👊 🤛 🤜 👏 🙌 👐 🤲 🤝 🙏 ✍️ 💅 🤳 💪 🧠 👀 👄 👅 👶 👧 🧒 👦 👩 🧑 👨 👩‍❤️‍👨 👩‍❤️‍👩 👨‍❤️‍👨 💏 💑 🐶 🐱 🐭 🐹 🐰 🦊 🐻 🐼 🐨 🐯 🦁 🐮 🐷 🐸 🐵 🍎 🍓 🍒 🍫 🍰 🎂 ☕ 🍕 🚗 🏍️ ✈️ 🏠 📱 💻 📷 🎵 🎶 🎧 ⚽ 🏏`.split(/\s+/);
+    function today(){ return new Date().toISOString().slice(0,10); }
+    function path(){ return "loveBirdsChat/" + document.getElementById("chatDate").value; }
+    function setStatus(txt, cls){ const s=document.getElementById('netStatus'); s.textContent=txt; s.className='status '+(cls||''); }
+    function firebaseReady(){ return !firebaseConfig.apiKey.includes('PASTE_') && firebaseConfig.databaseURL.includes('firebaseio.com'); }
+    function initFirebase(){
+      if(!firebaseReady()){ setStatus('Firebase config missing: messages दूसरे phone पर नहीं जाएंगे', 'bad'); document.getElementById('sendBtn').disabled=true; return; }
+      try{ firebase.initializeApp(firebaseConfig); db=firebase.database(); setStatus('Online sync ready ✓', 'ok'); }
+      catch(e){ setStatus('Firebase error: config check करें', 'bad'); console.error(e); }
+    }
+    function init(){
+      document.getElementById("chatDate").value = today();
+      document.getElementById("emojiPanel").innerHTML = emojis.map(e=>`<button onclick="addEmoji('${e}')">${e}</button>`).join("");
+      document.getElementById("text").addEventListener("input", e=>document.getElementById("count").textContent=e.target.value.length);
+      initFirebase(); if(currentUser) showApp();
+      setInterval(()=>{ if(document.getElementById("chatDate").value !== today()){ document.getElementById("chatDate").value=today(); watchMessages(); }}, 60000);
+      setInterval(autoClear, 60000);
+    }
+    function login(){ const u=document.getElementById("username").value.trim().toUpperCase(); const p=document.getElementById("password").value.trim(); if(USERS[u] && USERS[u]===p){ currentUser=u; sessionStorage.setItem("loveUser",u); showApp(); } else document.getElementById("loginErr").textContent="गलत username या password"; }
+    function showApp(){ document.getElementById("loginScreen").style.display="none"; document.getElementById("app").style.display="grid"; document.getElementById("me").textContent=currentUser; watchMessages(); }
+    function logout(){ sessionStorage.removeItem("loveUser"); location.reload(); }
+    function watchMessages(){
+      const box=document.getElementById("messages");
+      if(!db){ box.innerHTML='<div class="empty">Firebase config भरें, फिर chat online चलेगी.</div>'; return; }
+      if(currentRef && currentListener) currentRef.off('value', currentListener);
+      currentRef = db.ref(path()+"/messages");
+      currentListener = snap => { const val=snap.val()||{}; const msgs=Object.entries(val).map(([id,m])=>({id,...m})).sort((a,b)=>(a.time||0)-(b.time||0)); renderMessages(msgs); };
+      currentRef.on('value', currentListener, err=>{ setStatus('Database permission/config error', 'bad'); console.error(err); });
+    }
+    function renderMessages(msgs){
+      const box=document.getElementById("messages");
+      if(!msgs.length){ box.innerHTML=`<div class="empty">♡ अभी कोई मैसेज नहीं है<br>पहला प्यार भरा मैसेज भेजें...</div>`; return; }
+      box.innerHTML = msgs.map(m=>{ const mine=m.user===currentUser; let content=""; if(m.text) content+=escapeHtml(m.text); if(m.image) content+=`<br><img src="${m.image}" alt="sent image">`; if(m.audio) content+=`<br><audio controls src="${m.audio}"></audio>`; return `<div class="msg ${mine?'mine':'theirs'}"><div class="bubble">${content}</div><div class="meta">${m.user||''} • ${new Date(m.time||Date.now()).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</div></div>`; }).join("");
+      box.scrollTop=box.scrollHeight;
+    }
+    async function sendMessage(){
+      const textEl=document.getElementById("text"), text=textEl.value.trim(); if(!text && !imageData && !audioData) return; if(!db){ alert('Firebase config missing है. पहले config paste करें.'); return; }
+      document.getElementById('sendBtn').disabled=true;
+      try{ await db.ref(path()+"/messages").push({user:currentUser, text, image:imageData, audio:audioData, time:Date.now()}); textEl.value=""; document.getElementById("count").textContent="0"; imageData=""; audioData=""; document.getElementById("picked").textContent=""; document.getElementById("imageInput").value=""; }
+      catch(e){ alert('Message send नहीं हुआ. Firebase Database rules/config check करें.'); console.error(e); }
+      finally{ document.getElementById('sendBtn').disabled=false; }
+    }
+    async function manualClear(){ if(!db) return; if(confirm("इस date की chat clear करनी है?")) await db.ref(path()).remove(); }
+    async function autoClear(){ if(!db) return; const meta=db.ref('loveBirdsChatMeta/lastClear'); const snap=await meta.get(); const last=Number(snap.val()||0); if(Date.now()-last>=30*60*1000){ await db.ref('loveBirdsChat/'+today()).remove(); await meta.set(Date.now()); } }
+    function toggleEmoji(){ const p=document.getElementById("emojiPanel"); p.style.display=p.style.display==="block"?"none":"block"; }
+    function addEmoji(e){ const t=document.getElementById("text"); t.value+=e; t.focus(); document.getElementById("count").textContent=t.value.length; }
+    function pickImage(ev){ const f=ev.target.files[0]; if(!f) return; if(f.size>900000){ alert('Image 900KB से कम रखें, Firebase में base64 limit के लिए.'); ev.target.value=''; return; } const r=new FileReader(); r.onload=()=>{ imageData=r.result; document.getElementById("picked").textContent="Image ready ✓"; }; r.readAsDataURL(f); }
+    async function toggleRecording(){ const btn=document.getElementById("voiceBtn"); if(mediaRecorder && mediaRecorder.state==="recording"){ mediaRecorder.stop(); btn.textContent="🎙️"; return; } try{ const stream=await navigator.mediaDevices.getUserMedia({audio:true}); audioChunks=[]; mediaRecorder=new MediaRecorder(stream); mediaRecorder.ondataavailable=e=>audioChunks.push(e.data); mediaRecorder.onstop=()=>{ const blob=new Blob(audioChunks,{type:"audio/webm"}); if(blob.size>900000){ alert('Voice छोटा रखें, 900KB से कम.'); stream.getTracks().forEach(t=>t.stop()); return; } const r=new FileReader(); r.onload=()=>{ audioData=r.result; document.getElementById("picked").textContent="Voice ready ✓"; }; r.readAsDataURL(blob); stream.getTracks().forEach(t=>t.stop()); }; mediaRecorder.start(); btn.textContent="⏹️"; }catch(e){ alert("Mic permission allow करें। HTTPS पर recording चलेगी।"); } }
+    function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c])); }
+    init();
+  </script>
 </body>
 </html>
