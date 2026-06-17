@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AK और UR Private Chat</title>
+  <title>OUR SPACE</title>
   <style>
     :root{
       --bg:#050505;--card:#101010;--card2:#181818;--text:#fff;--muted:#b8b8b8;--line:#2d2d2d;
@@ -13,36 +13,32 @@
     body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--text);background:
       radial-gradient(circle at 10% 15%,rgba(255,255,255,.18),transparent 28%),
       radial-gradient(circle at 90% 20%,rgba(255,255,255,.10),transparent 28%),linear-gradient(135deg,#000,#111 48%,#000);overflow:hidden;font-size:12px}
-    .hearts{position:fixed;inset:0;pointer-events:none;opacity:.14;z-index:0}.hearts:before,.hearts:after{content:"♡";position:absolute;font-size:12rem;color:#fff;animation:float 8s ease-in-out infinite}.hearts:before{left:-35px;top:20px;rotate:-16deg}.hearts:after{right:-35px;bottom:-35px;rotate:16deg;animation-delay:-3s}@keyframes float{50%{translate:0 -18px;opacity:.35}}
     .login,.app{position:relative;z-index:1}.login{min-height:100%;display:grid;place-items:center;padding:14px}.login-card{width:min(340px,100%);background:rgba(12,12,12,.9);border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:0 20px 70px rgba(255,255,255,.08);backdrop-filter:blur(14px)}
-    .logo{text-align:center;font-size:42px;letter-spacing:6px}.title{text-align:center;font-size:20px;font-weight:900;margin:0}.sub{text-align:center;color:var(--muted);line-height:1.45;margin:8px 0 16px;font-size:11px}
+    .logo{display:none}.title{text-align:center;font-size:24px;font-weight:950;margin:8px 0 18px;letter-spacing:1px}.sub{display:none}
     input,textarea,button{font:inherit;border-radius:13px;border:1px solid var(--line);outline:none}input,textarea{width:100%;background:#050505;color:#fff;padding:11px 12px;margin:6px 0}button{cursor:pointer;background:#fff;color:#000;border-color:#fff;padding:10px 12px;font-weight:900}button.secondary{background:#121212;color:#fff;border-color:#3a3a3a}button:disabled{opacity:.55;cursor:not-allowed}.err{min-height:18px;text-align:center;color:var(--bad);margin-top:8px}
 
     /* Half Chrome window friendly compact layout */
-    .app{height:min(94vh,760px);display:none;grid-template-rows:auto 1fr auto;width:min(430px,100vw);margin:3vh auto;padding:8px}.topbar{display:flex;align-items:center;justify-content:space-between;gap:8px;background:rgba(10,10,10,.92);border:1px solid var(--line);border-radius:18px 18px 8px 8px;padding:9px 10px;backdrop-filter:blur(12px)}.who{font-weight:950;font-size:13px}.status{font-size:10px;color:var(--muted);margin-top:2px}.status.ok{color:var(--ok)}.status.bad{color:var(--bad)}.status.warn{color:var(--warn)}.actions{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}.actions button,.actions input{padding:7px 8px;border-radius:10px;font-size:10px;margin:0}.actions input{width:112px}
-    .messages{overflow:auto;padding:10px 9px;background:rgba(255,255,255,.035);border-left:1px solid var(--line);border-right:1px solid var(--line);scroll-behavior:smooth;position:relative}.empty{text-align:center;color:var(--muted);line-height:1.55;margin-top:20vh}.newCount{position:sticky;top:0;z-index:2;margin:0 auto 8px;width:max-content;background:#fff;color:#000;border-radius:999px;padding:4px 10px;font-size:10px;font-weight:900;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+    .app{height:min(94vh,760px);display:none;grid-template-rows:auto minmax(0,1fr) auto;width:min(430px,100vw);margin:3vh auto;padding:8px;min-height:0}.topbar{display:flex;align-items:center;justify-content:space-between;gap:8px;background:rgba(10,10,10,.92);border:1px solid var(--line);border-radius:18px 18px 8px 8px;padding:9px 10px;backdrop-filter:blur(12px)}.who{font-weight:950;font-size:13px}.status{font-size:10px;color:var(--muted);margin-top:2px}.status.ok{color:var(--ok)}.status.bad{color:var(--bad)}.status.warn{color:var(--warn)}.actions{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}.actions button,.actions input{padding:7px 8px;border-radius:10px;font-size:10px;margin:0}.actions input{width:112px}
+    .messages{overflow:auto;padding:10px 9px;background:rgba(255,255,255,.035);border-left:1px solid var(--line);border-right:1px solid var(--line);scroll-behavior:smooth;position:relative;min-height:0}.empty{text-align:center;color:var(--muted);line-height:1.55;margin-top:20vh}.newCount{position:sticky;top:0;z-index:2;margin:0 auto 8px;width:max-content;background:#fff;color:#000;border-radius:999px;padding:4px 10px;font-size:10px;font-weight:900;box-shadow:0 8px 24px rgba(0,0,0,.35)}
     details.msgGroup{max-width:82%;margin:8px 0}.msgGroup.mine{margin-left:auto}.msgGroup summary{list-style:none;cursor:pointer;user-select:none;font-size:10px;color:var(--muted);margin-bottom:4px;padding:0 4px}.msgGroup summary::-webkit-details-marker{display:none}.msgGroup.mine summary{text-align:right}.senderName{font-weight:900;color:#fff}.groupCount{opacity:.8}.msg{display:flex;flex-direction:column;gap:3px;margin:5px 0}.msg.mine{align-items:flex-end}.bubble{padding:8px 10px;border-radius:15px;line-height:1.35;white-space:pre-wrap;word-break:break-word;box-shadow:0 6px 18px rgba(0,0,0,.25);font-size:11px}.mine .bubble{background:var(--mine);color:var(--mineText);border-bottom-right-radius:4px}.theirs .bubble{background:var(--their);border:1px solid #303030;border-bottom-left-radius:4px}.meta{font-size:9px;color:var(--muted);padding:0 4px}.bubble img{display:block;max-width:190px;border-radius:11px;margin-top:6px}audio{width:190px;max-width:100%;margin-top:6px}
-    .composer{background:rgba(10,10,10,.94);border:1px solid var(--line);border-radius:8px 8px 18px 18px;padding:8px;display:grid;gap:7px;backdrop-filter:blur(12px)}textarea{min-height:43px;max-height:110px;resize:vertical;margin:0;font-size:11px;line-height:1.35}.row{display:flex;gap:5px;align-items:center;flex-wrap:wrap}.grow{flex:1}.tool{width:auto;min-width:36px;padding:8px;border-radius:11px}.send{min-width:78px}.hint{font-size:10px;color:var(--muted)}.fileName{color:#fff}.emoji-panel{display:none;max-height:125px;overflow:auto;padding:7px;border:1px solid var(--line);border-radius:13px;background:#080808}.emoji-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;color:var(--muted);font-size:10px}.emoji-close{padding:4px 8px!important;min-width:auto!important;border-radius:9px!important}.emoji-list button{background:#151515;color:#fff;border-color:#282828;margin:2px;padding:5px;min-width:28px;border-radius:8px;font-size:13px}
+    .composer{background:rgba(10,10,10,.94);border:1px solid var(--line);border-radius:8px 8px 18px 18px;padding:7px;display:grid;gap:5px;backdrop-filter:blur(12px);max-height:40vh;overflow:auto}textarea{min-height:34px;max-height:70px;resize:vertical;margin:0;font-size:11px;line-height:1.3;padding:8px 10px}.row{display:flex;gap:5px;align-items:center;flex-wrap:wrap}.grow{flex:1}.tool{width:auto;min-width:36px;padding:8px;border-radius:11px}.send{min-width:78px}.hint{font-size:10px;color:var(--muted)}.fileName{color:#fff}.emoji-panel{display:none;max-height:125px;overflow:auto;padding:7px;border:1px solid var(--line);border-radius:13px;background:#080808}.emoji-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;color:var(--muted);font-size:10px}.emoji-close{padding:4px 8px!important;min-width:auto!important;border-radius:9px!important}.emoji-list button{background:#151515;color:#fff;border-color:#282828;margin:2px;padding:5px;min-width:28px;border-radius:8px;font-size:13px}
     .setup{display:none;background:#150b0b;border:1px solid #613333;color:#ffdede;border-radius:12px;padding:9px;font-size:10px;line-height:1.4}.setup b{color:#fff}
-    @media(max-width:460px){.app{height:100%;width:100%;margin:0;padding:0}.topbar,.composer{border-radius:0}.bubble img{max-width:170px}.actions button,.actions input{font-size:9px}.login-card{padding:20px}}
+    @media(max-width:460px){.app{height:100dvh;width:100%;margin:0;padding:0;grid-template-rows:auto minmax(0,1fr) auto}.topbar,.composer{border-radius:0}.topbar{padding:6px 7px;gap:5px}.profileWrap{gap:5px}.avatar{width:28px;height:28px}.who{font-size:11px}.status{font-size:9px}.actions{gap:3px}.actions button,.actions input,.profileBtn{font-size:9px!important;padding:5px 6px!important}.actions input{width:95px}.messages{padding:7px 6px}.bubble{font-size:10.5px;padding:7px 9px}.bubble img{max-width:160px}.composer{padding:5px;gap:4px;max-height:34vh}textarea{min-height:30px;max-height:54px;font-size:10.5px;padding:7px 9px}.tool{min-width:30px;padding:6px}.send{min-width:62px;padding:7px 9px}.hint{font-size:9px}.emoji-panel,.sticker-panel{max-height:90px;padding:5px}.login-card{padding:20px}}
+    @media(max-height:560px){.app{height:100dvh;margin:0}.topbar{padding:5px 7px}.avatar{width:26px;height:26px}.actions button,.actions input,.profileBtn{font-size:8.5px!important;padding:4px 5px!important}.messages{padding:6px}.composer{padding:5px;gap:4px;max-height:32vh}textarea{min-height:28px;max-height:44px}.row{gap:3px}.tool{min-width:28px;padding:5px}.send{min-width:58px;padding:6px 8px}.emoji-panel,.sticker-panel{max-height:75px}}
 
     .profileWrap{display:flex;align-items:center;gap:8px}.avatar{width:34px;height:34px;border-radius:50%;object-fit:cover;border:2px solid #fff;background:#1a1a1a;box-shadow:0 0 12px rgba(255,255,255,.18)}.profileBtn{position:relative;overflow:hidden}.profileBtn input{display:none}.heartBurst{position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden}.heartParticle{position:absolute;font-size:18px;animation:heartPop 1.6s ease-out forwards;filter:drop-shadow(0 4px 8px rgba(0,0,0,.35))}@keyframes heartPop{0%{transform:translate(-50%,-50%) scale(.2);opacity:0}15%{opacity:1}100%{transform:translate(var(--x),var(--y)) scale(1.4) rotate(var(--r));opacity:0}}
-    .login-card button:hover{box-shadow:0 0 28px rgba(255,105,180,.75),0 0 55px rgba(255,0,90,.35);transform:translateY(-1px)}.login-card button{transition:.22s ease}.loveRain{position:absolute;inset:0;pointer-events:none;overflow:hidden;border-radius:15px}.loveDrop{position:absolute;top:-12px;font-size:12px;animation:loveFall 10s linear forwards;opacity:.95}@keyframes loveFall{to{transform:translateY(78px) rotate(360deg);opacity:0}}
+    .login-card button:hover{box-shadow:0 0 24px rgba(255,255,255,.25);transform:translateY(-1px)}.login-card button{transition:.22s ease}.loveRain{position:absolute;inset:0;pointer-events:none;overflow:hidden;border-radius:15px}.loveDrop{position:absolute;top:-12px;font-size:12px;animation:loveFall 10s linear forwards;opacity:.95}@keyframes loveFall{to{transform:translateY(78px) rotate(360deg);opacity:0}}
     .msg.mine{align-items:flex-start}.msgGroup.mine{margin-left:0;margin-right:auto}.msgGroup.mine summary{text-align:left}.mine .bubble{border-bottom-right-radius:15px;border-bottom-left-radius:4px;position:relative}.their .bubble{position:relative}.sticker-panel{display:none;max-height:150px;overflow:auto;padding:7px;border:1px solid var(--line);border-radius:13px;background:#080808}.sticker-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;color:var(--muted);font-size:10px}.sticker-list button{background:#151515;color:#fff;border-color:#282828;margin:3px;padding:7px 8px;min-width:58px;border-radius:10px;font-size:20px}.stickerText{font-size:26px;line-height:1.2}.loveQuick{font-size:10px;color:#ffd6e8;margin-left:4px}
 
   </style>
 </head>
 <body>
-  <div class="hearts"></div>
-
   <section class="login" id="loginScreen">
     <div class="login-card">
-      <div class="logo">♡♡</div>
-      <h1 class="title">AK और UR Chat</h1>
-      <div class="sub">Private black & white romantic chat<br>Username: <b>AK</b> या <b>UR</b><br>Password: AK=<b>2006</b>, UR=<b>2810</b></div>
-      <input id="username" placeholder="Username: AK या UR" autocomplete="username" onkeydown="loginOnEnter(event)" />
+      <h1 class="title">OUR SPACE</h1>
+      <input id="username" placeholder="Username" autocomplete="username" onkeydown="loginOnEnter(event)" />
       <input id="password" type="password" placeholder="Password" autocomplete="current-password" onkeydown="loginOnEnter(event)" />
-      <button style="width:100%;margin-top:8px" onclick="login()">Login ♡</button>
+      <button style="width:100%;margin-top:8px" onclick="login()">Login</button>
       <div class="err" id="loginErr"></div>
     </div>
   </section>
@@ -52,7 +48,7 @@
       <div class="profileWrap">
         <img id="myAvatar" class="avatar" alt="profile" />
         <div>
-          <div class="who">♡ <span id="me"></span> की Chat</div>
+          <div class="who"><span id="me"></span> की Chat</div>
           <div class="status" id="netStatus">Starting...</div>
         </div>
       </div>
@@ -97,14 +93,14 @@
       appId: "1:970506787698:web:18fd5ae92be7e230fe5beb"
     };
 
-    const USERS = { AK:"2006", UR:"2810" };
+    const USERS = { U:"2810", M:"2006" };
     let currentUser = sessionStorage.getItem("akUrUser") || "";
-    if(currentUser === "AKA") currentUser = "AK";
+    if(currentUser === "AKA" || currentUser === "AK" || currentUser === "UR") currentUser = currentUser === "UR" ? "U" : "M";
     let db = null, firebaseOK = false, currentRef = null, currentListener = null, lastMsgTotal = 0;
     let imageData = "", audioData = "", mediaRecorder = null, audioChunks = [];
     const emojis = "❤️ 💖 💗 💓 💞 💕 💘 💝 💟 ❣️ 💋 💌 🌹 🥰 😍 😘 🫶 💑 💏 👩‍❤️‍👨 💐 ✨ 😀 😃 😄 😁 😆 😂 🤣 😊 😍 🥰 😘 😗 😙 😚 😉 😌 🤗 🤭 😋 😜 🤪 😝 😎 🥳 🥺 😢 😭 😡 😴 ❤️ 🧡 💛 💚 💙 💜 🤎 🖤 🤍 💘 💝 💖 💗 💓 💞 💕 💟 ❣️ 💔 💋 💌 🌹 🥀 🌺 🌸 🌼 🌻 ⭐ 🌙 ☀️ 🌈 🔥 ✨ 🎉 🎊 🎁 👋 👍 👎 🙏 👏 🙌 🤝 💪 👀 👄 👩‍❤️‍👨 💏 💑 🐦 🕊️ 🦢 🍫 🎂 ☕ 🍕 📱 🎵 🎶 🎧".split(/\s+/);
 
-    const loveStickers = ["❤️ I Love You ❤️", "💖 Love You जान 💖", "🥰 Miss You 🥰", "😘 Kiss 😘", "🌹 For You 🌹", "💞 Forever 💞", "💌 પ્રેમ 💌", "❤️ હું તને પ્રેમ કરું છું ❤️", "💖 મિસ યુ 💖", "🌹 મારા દિલમાં તું 🌹", "💘 आई लव यू 💘", "💞 मेरी जान 💞", "💕 तुम खास हो 💕", "💝 Only You 💝", "💓 Dil Se Love 💓", "💑 AK♡UR 💑", "🫶 Love Love 🫶", "💋 Sweet Kiss 💋", "💐 मेरी मोहब्बत 💐", "✨ Full Love ✨"];
+    const loveStickers = ["❤️ I Love You ❤️", "💖 Love You जान 💖", "🥰 Miss You 🥰", "😘 Kiss 😘", "🌹 For You 🌹", "💞 Forever 💞", "💌 પ્રેમ 💌", "❤️ હું તને પ્રેમ કરું છું ❤️", "💖 મિસ યુ 💖", "🌹 મારા દિલમાં તું 🌹", "💘 आई लव यू 💘", "💞 मेरी जान 💞", "💕 तुम खास हो 💕", "💝 Only You 💝", "💓 Dil Se Love 💓", "💑 U♡M 💑", "🫶 Love Love 🫶", "💋 Sweet Kiss 💋", "💐 मेरी मोहब्बत 💐", "✨ Full Love ✨"];
 
     function today(){ return new Date().toISOString().slice(0,10); }
     function path(){ return "akaUrChat/" + document.getElementById("chatDate").value; }
@@ -129,14 +125,14 @@
       textEl.addEventListener("keydown", e => { if(e.key === "Enter" && !e.shiftKey){ e.preventDefault(); sendMessage(); } });
       initFirebase(); if(currentUser && USERS[currentUser]) showApp();
       setInterval(() => { if(document.getElementById("chatDate").value !== today()){ document.getElementById("chatDate").value = today(); watchMessages(); } }, 60000);
-      setInterval(autoClear, 60000);
+      setInterval(autoClear, 10000);
     }
 
     function login(){
       const u = document.getElementById("username").value.trim().toUpperCase();
       const p = document.getElementById("password").value.trim();
-      if(USERS[u] && USERS[u] === p){ currentUser = u; sessionStorage.setItem("akUrUser", u); heartBlast(); setTimeout(showApp, 420); }
-      else document.getElementById("loginErr").textContent = "गलत username या password";
+      if(USERS[u] && USERS[u] === p){ currentUser = u; sessionStorage.setItem("akUrUser", u); showApp(); }
+      else document.getElementById("loginErr").textContent = "Wrong username or password";
     }
     function showApp(){ document.getElementById("loginScreen").style.display="none"; document.getElementById("app").style.display="grid"; document.getElementById("me").textContent=currentUser; loadProfilePic(); watchMessages(); }
     function logout(){ sessionStorage.removeItem("akUrUser"); sessionStorage.removeItem("akaUrUser"); location.reload(); }
@@ -210,9 +206,14 @@
       if(firebaseOK) await db.ref(path()).remove(); else { localStorage.removeItem(localKey()); renderMessages([]); }
     }
     async function autoClear(){
-      if(!firebaseOK) return;
+      if(!firebaseOK){
+        const key = "akaUrChatMeta_lastClear";
+        const lastLocal = Number(localStorage.getItem(key) || 0);
+        if(Date.now() - lastLocal >= 60*1000){ localStorage.removeItem(localKey()); localStorage.setItem(key, String(Date.now())); renderMessages([]); }
+        return;
+      }
       const meta = db.ref("akaUrChatMeta/lastClear"); const snap = await meta.get(); const last = Number(snap.val() || 0);
-      if(Date.now() - last >= 30*60*1000){ await db.ref("akaUrChat/" + today()).remove(); await meta.set(Date.now()); }
+      if(Date.now() - last >= 60*1000){ await db.ref("akaUrChat/" + today()).remove(); await meta.set(Date.now()); }
     }
     function toggleEmoji(){ const p=document.getElementById("emojiPanel"); p.style.display = p.style.display === "block" ? "none" : "block"; }
     function closeEmoji(){ document.getElementById("emojiPanel").style.display = "none"; }
@@ -253,7 +254,7 @@
       setTimeout(()=>wrap.remove(), 2100);
     }
     function profileKey(){ return "akUrProfile_" + currentUser; }
-    function loadProfilePic(){ const img=document.getElementById("myAvatar"); const saved=localStorage.getItem(profileKey()); img.src = saved || "data:image/svg+xml;utf8," + encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80'><rect width='100%' height='100%' fill='black'/><text x='50%' y='56%' font-size='34' fill='white' text-anchor='middle' font-family='Arial'>${currentUser||'♡'}</text></svg>`); }
+    function loadProfilePic(){ const img=document.getElementById("myAvatar"); const saved=localStorage.getItem(profileKey()); img.src = saved || "data:image/svg+xml;utf8," + encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80'><rect width='100%' height='100%' fill='black'/><text x='50%' y='56%' font-size='34' fill='white' text-anchor='middle' font-family='Arial'>${currentUser||''}</text></svg>`); }
     function updateProfilePic(ev){ const f=ev.target.files[0]; if(!f) return; if(f.size>900000){ alert("Profile photo 900KB से कम रखें."); ev.target.value=""; return; } const r=new FileReader(); r.onload=()=>{ localStorage.setItem(profileKey(), r.result); loadProfilePic(); heartBlast(); }; r.readAsDataURL(f); }
     function toggleStickers(){ const p=document.getElementById("stickerPanel"); p.style.display = p.style.display === "block" ? "none" : "block"; }
     function closeStickers(){ document.getElementById("stickerPanel").style.display = "none"; }
