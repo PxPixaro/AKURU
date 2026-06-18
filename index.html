@@ -65,6 +65,32 @@
     .messages>.msg.theirs{align-items:flex-start!important;margin-right:0!important}
     .messages>.msg .bubble{max-width:78%!important;display:block!important}
 
+  
+
+    /* Advanced WhatsApp-like update */
+    :root{--waBg:#0b141a;--waPanel:#111b21;--waHeader:#202c33;--waMine:#005c4b;--waTheir:#202c33;--waAccent:#00a884;--waText:#e9edef;--waMuted:#8696a0;--waLine:#2a3942}
+    body{background:var(--waBg)!important;color:var(--waText)!important;font-size:13px!important}
+    .login-card{background:var(--waPanel)!important;border-color:var(--waLine)!important;border-radius:18px!important}
+    .title{color:var(--waAccent)!important;letter-spacing:.5px!important}
+    input,textarea{background:#0b141a!important;color:var(--waText)!important;border-color:var(--waLine)!important}
+    button{background:var(--waAccent)!important;border-color:var(--waAccent)!important;color:#061b16!important}
+    button.secondary,.tool.secondary,label.secondary{background:var(--waHeader)!important;color:var(--waText)!important;border-color:var(--waLine)!important}
+    .app{height:min(96vh,820px)!important;width:min(430px,100vw)!important;margin:2vh auto!important;padding:0!important;border:1px solid var(--waLine);border-radius:18px;overflow:hidden;box-shadow:0 20px 70px rgba(0,0,0,.55)}
+    .topbar{background:var(--waHeader)!important;border:0!important;border-radius:0!important;padding:10px 11px!important}
+    .who{font-size:14px!important}.status{color:var(--waMuted)!important}
+    .avatar{border-color:var(--waAccent)!important;box-shadow:none!important}
+    .messages{background:#0b141a!important;background-image:radial-gradient(rgba(255,255,255,.04) 1px, transparent 1px)!important;background-size:18px 18px!important;border:0!important;padding:12px 8px!important;gap:4px!important}
+    .msg .bubble{max-width:78%!important;font-size:13px!important;padding:7px 9px!important;box-shadow:0 1px 1px rgba(0,0,0,.25)!important}
+    .msg.mine .bubble{background:var(--waMine)!important;color:var(--waText)!important;border-radius:8px 8px 0 8px!important}
+    .msg.theirs .bubble{background:var(--waTheir)!important;color:var(--waText)!important;border:0!important;border-radius:8px 8px 8px 0!important}
+    .senderLine{display:none!important}.meta{color:var(--waMuted)!important;font-size:9px!important}
+    .composer{background:var(--waPanel)!important;border:0!important;border-radius:0!important;padding:7px!important}
+    textarea{border-radius:22px!important;min-height:38px!important;max-height:90px!important;font-size:13px!important;padding:10px 13px!important}
+    .send{border-radius:20px!important}.tool{border-radius:50%!important;min-width:38px!important;height:38px!important;padding:0!important}
+    .emoji-panel,.sticker-panel{background:var(--waPanel)!important;border-color:var(--waLine)!important}
+    .newCount{background:var(--waAccent)!important;color:#06251f!important}
+    @media(max-width:460px){.app{height:100dvh!important;margin:0!important;border:0!important;border-radius:0!important}.topbar{padding:8px!important}.msg .bubble{font-size:12.5px!important;max-width:82%!important}}
+
   </style>
 </head>
 <body>
@@ -88,9 +114,9 @@
         </div>
       </div>
       <div class="actions">
-        <label class="secondary profileBtn" style="cursor:pointer;padding:7px 8px;border-radius:10px;font-size:10px">Profile 📷<input id="profileInput" type="file" accept="image/*" onchange="updateProfilePic(event)" /></label>
+        <label class="secondary profileBtn" style="cursor:pointer;padding:7px 8px;border-radius:10px;font-size:10px">📷<input id="profileInput" type="file" accept="image/*" onchange="updateProfilePic(event)" /></label>
         <input type="date" id="chatDate" onchange="watchMessages()" />
-        <button class="secondary" onclick="manualClear()">Clear</button>
+        <button class="secondary" onclick="resetChat()">Reset</button>
         <button class="secondary" onclick="logout()">Logout</button>
       </div>
     </header>
@@ -103,7 +129,7 @@
       </div>
       <div class="emoji-panel" id="emojiPanel"></div>
       <div class="sticker-panel" id="stickerPanel"></div>
-      <textarea id="text" maxlength="5000" placeholder="Message लिखें... Enter = Send, Shift+Enter = New line"></textarea>
+      <textarea id="text" maxlength="5000" placeholder="Message"></textarea>
       <div class="row">
         <button class="tool secondary" onclick="toggleEmoji()">😊</button>
         <button class="tool secondary" onclick="toggleStickers()">💌</button>
@@ -160,7 +186,7 @@
       textEl.addEventListener("keydown", e => { if(e.key === "Enter" && !e.shiftKey){ e.preventDefault(); sendMessage(); } });
       initFirebase(); if(currentUser && USERS[currentUser]) showApp();
       setInterval(() => { if(document.getElementById("chatDate").value !== today()){ document.getElementById("chatDate").value = today(); watchMessages(); } }, 60000);
-      setInterval(autoClear, 5000);
+      setInterval(autoClear, 15000);
     }
 
     function login(){
@@ -194,7 +220,7 @@
     function renderMessages(msgs){
       const box = document.getElementById("messages");
       const wasNearBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 80;
-      if(!msgs.length){ lastMsgTotal = 0; box.innerHTML = '<div class="empty">♡ अभी कोई मैसेज नहीं है<br>पहला मैसेज भेजें...</div>'; return; }
+      if(!msgs.length){ lastMsgTotal = 0; box.innerHTML = '<div class="empty">No messages yet<br>पहला message भेजें...</div>'; return; }
       const newCount = Math.max(0, msgs.length - lastMsgTotal);
       const countHtml = newCount > 0 && lastMsgTotal > 0 ? `<div class="newCount">${newCount} new message${newCount>1?'s':''} ↓</div>` : "";
       box.innerHTML = countHtml + msgs.map(m => {
@@ -228,11 +254,27 @@
       if(!confirm("इस date की chat clear करनी है?")) return;
       if(firebaseOK) await db.ref(path()).remove(); else { localStorage.removeItem(localKey()); renderMessages([]); }
     }
+
+    async function resetChat(){
+      if(!confirm("आज की पूरी chat reset/delete करनी है?")) return;
+      lastMsgTotal = 0;
+      if(firebaseOK){
+        await db.ref(path()+"/messages").remove();
+      }else{
+        localStorage.removeItem(localKey());
+        renderMessages([]);
+      }
+      document.getElementById("text").value = "";
+      document.getElementById("count").textContent = "0";
+      imageData = ""; audioData = "";
+      document.getElementById("picked").textContent = "";
+      closeEmoji(); closeStickers();
+    }
     async function autoClear(){
       const now = Date.now();
-      const limit = 60 * 1000;
+      const limit = 5 * 60 * 1000;
 
-      // Local/offline mode: सिर्फ वही messages हटेंगे जो 1 minute old हो चुके हैं.
+      // Local/offline mode: सिर्फ वही messages हटेंगे जो 5 minutes old हो चुके हैं.
       // अभी-अभी भेजे हुए messages रहेंगे, पूरी chat एक साथ clear नहीं होगी.
       if(!firebaseOK){
         const arr = getLocalMessages();
@@ -255,7 +297,7 @@
           if(now - Number(m.time || now) >= limit) updates[child.key] = null;
         });
         if(Object.keys(updates).length) await ref.update(updates);
-      }catch(e){ console.error("Auto clear failed", e); }
+      }catch(e){ console.error("Auto delete failed", e); }
     }
     function toggleEmoji(){ const p=document.getElementById("emojiPanel"); p.style.display = p.style.display === "block" ? "none" : "block"; }
     function closeEmoji(){ document.getElementById("emojiPanel").style.display = "none"; }
