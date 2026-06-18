@@ -3,340 +3,331 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>OUR SPACE</title>
+  <title>Over Space - M & U Chat</title>
   <style>
-    :root{
-      --bg:#050505;--card:#101010;--card2:#181818;--text:#fff;--muted:#b8b8b8;--line:#2d2d2d;
-      --mine:#fff;--mineText:#000;--their:#1f1f1f;--ok:#9cffb1;--bad:#ff9c9c;--warn:#ffd28a;
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      background: radial-gradient(circle at top, #1b1b1b, #050505 65%);
+      color: #fff;
+      overflow: hidden;
     }
-    *{box-sizing:border-box}html,body{height:100%}
-    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--text);background:
-      radial-gradient(circle at 10% 15%,rgba(255,255,255,.18),transparent 28%),
-      radial-gradient(circle at 90% 20%,rgba(255,255,255,.10),transparent 28%),linear-gradient(135deg,#000,#111 48%,#000);overflow:hidden;font-size:12px}
-    .login,.app{position:relative;z-index:1}.login{min-height:100%;display:grid;place-items:center;padding:14px}.login-card{width:min(340px,100%);background:rgba(12,12,12,.9);border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:0 20px 70px rgba(255,255,255,.08);backdrop-filter:blur(14px)}
-    .logo{display:none}.title{text-align:center;font-size:24px;font-weight:950;margin:8px 0 18px;letter-spacing:1px}.sub{display:none}
-    input,textarea,button{font:inherit;border-radius:13px;border:1px solid var(--line);outline:none}input,textarea{width:100%;background:#050505;color:#fff;padding:11px 12px;margin:6px 0}button{cursor:pointer;background:#fff;color:#000;border-color:#fff;padding:10px 12px;font-weight:900}button.secondary{background:#121212;color:#fff;border-color:#3a3a3a}button:disabled{opacity:.55;cursor:not-allowed}.err{min-height:18px;text-align:center;color:var(--bad);margin-top:8px}
-
-    /* Half Chrome window friendly compact layout */
-    .app{height:min(94vh,760px);display:none;grid-template-rows:auto minmax(0,1fr) auto;width:min(430px,100vw);margin:3vh auto;padding:8px;min-height:0}.topbar{display:flex;align-items:center;justify-content:space-between;gap:8px;background:rgba(10,10,10,.92);border:1px solid var(--line);border-radius:18px 18px 8px 8px;padding:9px 10px;backdrop-filter:blur(12px)}.who{font-weight:950;font-size:13px}.status{font-size:10px;color:var(--muted);margin-top:2px}.status.ok{color:var(--ok)}.status.bad{color:var(--bad)}.status.warn{color:var(--warn)}.actions{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}.actions button,.actions input{padding:7px 8px;border-radius:10px;font-size:10px;margin:0}.actions input{width:112px}
-    .messages{overflow:auto;padding:10px 9px;background:rgba(255,255,255,.035);border-left:1px solid var(--line);border-right:1px solid var(--line);scroll-behavior:smooth;position:relative;min-height:0}.empty{text-align:center;color:var(--muted);line-height:1.55;margin-top:20vh}.newCount{position:sticky;top:0;z-index:2;margin:0 auto 8px;width:max-content;background:#fff;color:#000;border-radius:999px;padding:4px 10px;font-size:10px;font-weight:900;box-shadow:0 8px 24px rgba(0,0,0,.35)}
-    details.msgGroup{max-width:82%;margin:8px 0}.msgGroup.mine{margin-left:auto}.msgGroup summary{list-style:none;cursor:pointer;user-select:none;font-size:10px;color:var(--muted);margin-bottom:4px;padding:0 4px}.msgGroup summary::-webkit-details-marker{display:none}.msgGroup.mine summary{text-align:right}.senderName{font-weight:900;color:#fff}.groupCount{opacity:.8}.msg{display:flex;flex-direction:column;gap:3px;margin:5px 0}.msg.mine{align-items:flex-end}.bubble{padding:8px 10px;border-radius:15px;line-height:1.35;white-space:pre-wrap;word-break:break-word;box-shadow:0 6px 18px rgba(0,0,0,.25);font-size:11px}.mine .bubble{background:var(--mine);color:var(--mineText);border-bottom-right-radius:4px}.theirs .bubble{background:var(--their);border:1px solid #303030;border-bottom-left-radius:4px}.meta{font-size:9px;color:var(--muted);padding:0 4px}.bubble img{display:block;max-width:190px;border-radius:11px;margin-top:6px}audio{width:190px;max-width:100%;margin-top:6px}
-    .composer{background:rgba(10,10,10,.94);border:1px solid var(--line);border-radius:8px 8px 18px 18px;padding:7px;display:grid;gap:5px;backdrop-filter:blur(12px);max-height:40vh;overflow:auto}textarea{min-height:34px;max-height:70px;resize:vertical;margin:0;font-size:11px;line-height:1.3;padding:8px 10px}.row{display:flex;gap:5px;align-items:center;flex-wrap:wrap}.grow{flex:1}.tool{width:auto;min-width:36px;padding:8px;border-radius:11px}.send{min-width:78px}.hint{font-size:10px;color:var(--muted)}.fileName{color:#fff}.emoji-panel{display:none;max-height:125px;overflow:auto;padding:7px;border:1px solid var(--line);border-radius:13px;background:#080808}.emoji-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;color:var(--muted);font-size:10px}.emoji-close{padding:4px 8px!important;min-width:auto!important;border-radius:9px!important}.emoji-list button{background:#151515;color:#fff;border-color:#282828;margin:2px;padding:5px;min-width:28px;border-radius:8px;font-size:13px}
-    .setup{display:none;background:#150b0b;border:1px solid #613333;color:#ffdede;border-radius:12px;padding:9px;font-size:10px;line-height:1.4}.setup b{color:#fff}
-    @media(max-width:460px){.app{height:100dvh;width:100%;margin:0;padding:0;grid-template-rows:auto minmax(0,1fr) auto}.topbar,.composer{border-radius:0}.topbar{padding:6px 7px;gap:5px}.profileWrap{gap:5px}.avatar{width:28px;height:28px}.who{font-size:11px}.status{font-size:9px}.actions{gap:3px}.actions button,.actions input,.profileBtn{font-size:9px!important;padding:5px 6px!important}.actions input{width:95px}.messages{padding:7px 6px}.bubble{font-size:10.5px;padding:7px 9px}.bubble img{max-width:160px}.composer{padding:5px;gap:4px;max-height:34vh}textarea{min-height:30px;max-height:54px;font-size:10.5px;padding:7px 9px}.tool{min-width:30px;padding:6px}.send{min-width:62px;padding:7px 9px}.hint{font-size:9px}.emoji-panel,.sticker-panel{max-height:90px;padding:5px}.login-card{padding:20px}}
-    @media(max-height:560px){.app{height:100dvh;margin:0}.topbar{padding:5px 7px}.avatar{width:26px;height:26px}.actions button,.actions input,.profileBtn{font-size:8.5px!important;padding:4px 5px!important}.messages{padding:6px}.composer{padding:5px;gap:4px;max-height:32vh}textarea{min-height:28px;max-height:44px}.row{gap:3px}.tool{min-width:28px;padding:5px}.send{min-width:58px;padding:6px 8px}.emoji-panel,.sticker-panel{max-height:75px}}
-
-    .profileWrap{display:flex;align-items:center;gap:8px}.avatar{width:34px;height:34px;border-radius:50%;object-fit:cover;border:2px solid #fff;background:#1a1a1a;box-shadow:0 0 12px rgba(255,255,255,.18)}.profileBtn{position:relative;overflow:hidden}.profileBtn input{display:none}.heartBurst{position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden}.heartParticle{position:absolute;font-size:18px;animation:heartPop 1.6s ease-out forwards;filter:drop-shadow(0 4px 8px rgba(0,0,0,.35))}@keyframes heartPop{0%{transform:translate(-50%,-50%) scale(.2);opacity:0}15%{opacity:1}100%{transform:translate(var(--x),var(--y)) scale(1.4) rotate(var(--r));opacity:0}}
-    .login-card button:hover{box-shadow:0 0 24px rgba(255,255,255,.25);transform:translateY(-1px)}.login-card button{transition:.22s ease}.loveRain{position:absolute;inset:0;pointer-events:none;overflow:hidden;border-radius:15px}.loveDrop{position:absolute;top:-12px;font-size:12px;animation:loveFall 10s linear forwards;opacity:.95}@keyframes loveFall{to{transform:translateY(78px) rotate(360deg);opacity:0}}
-    .msg.mine{align-items:flex-end}.mine .bubble{border-bottom-right-radius:4px;border-bottom-left-radius:15px;position:relative}.theirs .bubble{position:relative}.sticker-panel{display:none;max-height:150px;overflow:auto;padding:7px;border:1px solid var(--line);border-radius:13px;background:#080808}.sticker-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;color:var(--muted);font-size:10px}.sticker-list button{background:#151515;color:#fff;border-color:#282828;margin:3px;padding:7px 8px;min-width:58px;border-radius:10px;font-size:20px}.stickerText{font-size:26px;line-height:1.2}.loveQuick{font-size:10px;color:#ffd6e8;margin-left:4px}
-
-    /* WhatsApp-style: हर message अलग-अलग दिखेगा, user-wise group नहीं होगा. Heart/super effects removed. */
-    .heartBurst,.heartParticle,.loveRain,.loveDrop{display:none!important;animation:none!important}
-    .senderLine{font-weight:900;color:var(--muted);margin-top:2px}
-
-
-    /* Final WhatsApp-like chronological chat view */
-    .messages{display:flex;flex-direction:column;gap:6px}
-    .msg{width:100%;display:flex;flex-direction:column;margin:0}
-    .msg.mine{align-items:flex-end!important}
-    .msg.theirs{align-items:flex-start!important}
-    .msg .bubble{max-width:78%;font-size:10.5px;padding:7px 9px;border-radius:14px;line-height:1.32}
-    .msg.mine .bubble{background:var(--mine);color:var(--mineText);border-bottom-right-radius:4px;border-bottom-left-radius:14px}
-    .msg.theirs .bubble{background:var(--their);color:var(--text);border:1px solid #303030;border-bottom-left-radius:4px;border-bottom-right-radius:14px}
-    .msg.mine .meta{align-self:flex-end;text-align:right}
-    .msg.theirs .meta{align-self:flex-start;text-align:left}
-    .senderLine{font-size:8.5px;margin:0 6px 1px;color:var(--muted)}
-    .meta{font-size:8.5px;padding:0 6px;margin-top:1px}
-    .emoji-panel{max-height:88px;padding:5px;border-radius:10px}
-    .emoji-head{font-size:8.5px;margin-bottom:4px}
-    .emoji-list button{font-size:11px;min-width:22px;padding:3px 4px;margin:1px;border-radius:6px}
-    .sticker-panel{max-height:95px;padding:5px;border-radius:10px}
-    .sticker-head{font-size:8.5px;margin-bottom:4px}
-    .sticker-list button{font-size:13px;min-width:42px;padding:4px 5px;margin:2px;border-radius:7px}
-    .stickerText{font-size:18px;line-height:1.2}
-    @media(max-width:460px){.msg .bubble{max-width:80%;font-size:10px;padding:6px 8px}.emoji-list button{font-size:10.5px;min-width:21px}.stickerText{font-size:16px}}
-
-
-    /* Updated: WhatsApp-style flat chronological list, no user grouping/accordion */
-    details.msgGroup{display:contents!important}
-    .messages{display:flex!important;flex-direction:column!important;gap:6px!important;align-items:stretch!important}
-    .messages>.msg{width:100%!important;display:flex!important;flex-direction:column!important;margin:0!important;clear:both!important}
-    .messages>.msg.mine{align-items:flex-end!important;margin-left:0!important}
-    .messages>.msg.theirs{align-items:flex-start!important;margin-right:0!important}
-    .messages>.msg .bubble{max-width:78%!important;display:block!important}
-
-  
-
-    /* Advanced WhatsApp-like update */
-    :root{--waBg:#0b141a;--waPanel:#111b21;--waHeader:#202c33;--waMine:#005c4b;--waTheir:#202c33;--waAccent:#00a884;--waText:#e9edef;--waMuted:#8696a0;--waLine:#2a3942}
-    body{background:var(--waBg)!important;color:var(--waText)!important;font-size:13px!important}
-    .login-card{background:var(--waPanel)!important;border-color:var(--waLine)!important;border-radius:18px!important}
-    .title{color:var(--waAccent)!important;letter-spacing:.5px!important}
-    input,textarea{background:#0b141a!important;color:var(--waText)!important;border-color:var(--waLine)!important}
-    button{background:var(--waAccent)!important;border-color:var(--waAccent)!important;color:#061b16!important}
-    button.secondary,.tool.secondary,label.secondary{background:var(--waHeader)!important;color:var(--waText)!important;border-color:var(--waLine)!important}
-    .app{height:min(96vh,820px)!important;width:min(430px,100vw)!important;margin:2vh auto!important;padding:0!important;border:1px solid var(--waLine);border-radius:18px;overflow:hidden;box-shadow:0 20px 70px rgba(0,0,0,.55)}
-    .topbar{background:var(--waHeader)!important;border:0!important;border-radius:0!important;padding:10px 11px!important}
-    .who{font-size:14px!important}.status{color:var(--waMuted)!important}
-    .avatar{border-color:var(--waAccent)!important;box-shadow:none!important}
-    .messages{background:#0b141a!important;background-image:radial-gradient(rgba(255,255,255,.04) 1px, transparent 1px)!important;background-size:18px 18px!important;border:0!important;padding:12px 8px!important;gap:4px!important}
-    .msg .bubble{max-width:78%!important;font-size:13px!important;padding:7px 9px!important;box-shadow:0 1px 1px rgba(0,0,0,.25)!important}
-    .msg.mine .bubble{background:var(--waMine)!important;color:var(--waText)!important;border-radius:8px 8px 0 8px!important}
-    .msg.theirs .bubble{background:var(--waTheir)!important;color:var(--waText)!important;border:0!important;border-radius:8px 8px 8px 0!important}
-    .senderLine{display:none!important}.meta{color:var(--waMuted)!important;font-size:9px!important}
-    .composer{background:var(--waPanel)!important;border:0!important;border-radius:0!important;padding:7px!important}
-    textarea{border-radius:22px!important;min-height:38px!important;max-height:90px!important;font-size:13px!important;padding:10px 13px!important}
-    .send{border-radius:20px!important}.tool{border-radius:50%!important;min-width:38px!important;height:38px!important;padding:0!important}
-    .emoji-panel,.sticker-panel{background:var(--waPanel)!important;border-color:var(--waLine)!important}
-    .newCount{background:var(--waAccent)!important;color:#06251f!important}
-    @media(max-width:460px){.app{height:100dvh!important;margin:0!important;border:0!important;border-radius:0!important}.topbar{padding:8px!important}.msg .bubble{font-size:12.5px!important;max-width:82%!important}}
-
+    .center {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 18px;
+    }
+    .login-card {
+      width: min(420px, 94vw);
+      background: linear-gradient(145deg, #111, #050505);
+      border: 1px solid #444;
+      border-radius: 28px;
+      padding: 34px 28px;
+      box-shadow: 0 25px 60px rgba(0,0,0,.85), inset 0 0 25px rgba(255,255,255,.04);
+      transform-style: preserve-3d;
+      transition: .35s;
+    }
+    .login-card:hover {
+      transform: perspective(900px) rotateX(5deg) rotateY(-5deg) translateY(-8px);
+      box-shadow: 0 35px 80px rgba(255,255,255,.12), 0 20px 70px rgba(0,0,0,.9);
+    }
+    h1 { text-align:center; letter-spacing: 4px; margin: 0 0 25px; font-size: 34px; }
+    label { display:block; margin: 14px 0 7px; color:#ddd; }
+    input, button {
+      width: 100%; border: 0; outline: 0; border-radius: 16px; font-size: 16px;
+    }
+    input {
+      padding: 15px 16px; color:#fff; background:#111; border:1px solid #555;
+      box-shadow: inset 0 0 14px rgba(0,0,0,.7);
+    }
+    input:focus { border-color:#fff; box-shadow: 0 0 18px rgba(255,255,255,.18); }
+    button {
+      margin-top: 22px; padding: 15px; cursor:pointer; color:#000; font-weight:800;
+      background: linear-gradient(145deg, #fff, #bfbfbf);
+      box-shadow: 0 10px 0 #777, 0 22px 35px rgba(0,0,0,.65);
+      transition:.18s;
+    }
+    button:hover { transform: translateY(-3px); filter: brightness(1.15); }
+    button:active { transform: translateY(7px); box-shadow: 0 3px 0 #777; }
+    .hint { text-align:center; color:#aaa; font-size:13px; margin-top:13px; }
+    .error { min-height:20px; color:#ff8a8a; text-align:center; margin-top:12px; }
+    .chat-app { display:none; height:100vh; max-width:900px; margin:auto; background:#070707; border-left:1px solid #333; border-right:1px solid #333; }
+    .topbar {
+      height:72px; display:flex; align-items:center; gap:13px; padding:10px 16px;
+      background:linear-gradient(145deg,#000,#171717); border-bottom:1px solid #333;
+      box-shadow:0 8px 20px rgba(0,0,0,.7); position:relative; z-index:2;
+    }
+    .avatar {
+      width:48px; height:48px; border-radius:50%; background:#222; border:2px solid #fff;
+      overflow:hidden; display:flex; align-items:center; justify-content:center; font-weight:900;
+    }
+    .avatar img { width:100%; height:100%; object-fit:cover; }
+    .who { flex:1; }
+    .who b { font-size:18px; }
+    .who small { display:block; color:#aaa; margin-top:2px; }
+    .profile-btn, .logout-btn {
+      width:auto; margin:0; padding:10px 12px; border-radius:14px; box-shadow:none; font-size:13px;
+    }
+    #profileInput { display:none; }
+    .messages {
+      height: calc(100vh - 145px); overflow-y:auto; padding:18px 14px 28px;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255,255,255,.035), transparent 26%),
+        radial-gradient(circle at 85% 70%, rgba(255,255,255,.028), transparent 25%), #050505;
+    }
+    .msg-row { display:flex; margin:9px 0; animation: pop .22s ease; }
+    .msg-row.me { justify-content:flex-end; }
+    .bubble {
+      max-width:73%; padding:10px 12px 7px; border-radius:18px; word-wrap:break-word;
+      box-shadow: 0 7px 16px rgba(0,0,0,.45); position:relative;
+    }
+    .me .bubble { background:#156dff; border-bottom-right-radius:5px; }
+    .other .bubble { background:#8ecbff; color:#001a32; border-bottom-left-radius:5px; }
+    .name { font-size:12px; font-weight:900; opacity:.8; margin-bottom:3px; }
+    .time { display:block; font-size:10px; opacity:.78; text-align:right; margin-top:5px; }
+    @keyframes pop { from { transform:scale(.92); opacity:0; } to { transform:scale(1); opacity:1; } }
+    .composer {
+      height:73px; display:flex; align-items:center; gap:8px; padding:10px; background:#0d0d0d; border-top:1px solid #333;
+    }
+    .round {
+      width:44px; min-width:44px; height:44px; margin:0; border-radius:50%; padding:0; font-size:20px; box-shadow:none;
+      display:flex; align-items:center; justify-content:center;
+    }
+    #messageInput { flex:1; border-radius:23px; }
+    .send {
+      width:58px; min-width:58px; height:44px; margin:0; padding:0; border-radius:22px;
+      background:linear-gradient(145deg,#dff1ff,#62a8ff); color:#001; box-shadow:0 0 18px rgba(98,168,255,.28);
+    }
+    .send:hover { box-shadow:0 0 28px rgba(98,168,255,.95); transform:scale(1.06); }
+    .picker {
+      position:absolute; bottom:78px; left:12px; width:min(390px,94vw); max-height:270px; overflow:auto;
+      background:#111; border:1px solid #444; border-radius:22px; padding:12px; display:none;
+      box-shadow:0 20px 45px rgba(0,0,0,.8); z-index:5;
+    }
+    .picker h3 { margin:8px 6px; font-size:14px; color:#ccc; }
+    .item {
+      display:inline-flex; align-items:center; justify-content:center; width:38px; height:38px; margin:4px;
+      border-radius:12px; background:#1c1c1c; cursor:pointer; font-size:23px; transition:.15s;
+    }
+    .item:hover { transform:scale(1.18); background:#fff; }
+    .flower {
+      position:fixed; top:50%; left:50%; pointer-events:none; font-size:22px; animation: blast 1s ease-out forwards; z-index:99;
+    }
+    @keyframes blast {
+      to { transform: translate(var(--x), var(--y)) rotate(520deg) scale(.2); opacity:0; }
+    }
+    .hidden { display:none; }
+    @media (max-width:600px) { .bubble{max-width:84%;} h1{font-size:28px;} }
   </style>
 </head>
 <body>
-  <section class="login" id="loginScreen">
+  <div class="center" id="loginScreen">
     <div class="login-card">
-      <h1 class="title">OUR SPACE</h1>
-      <input id="username" placeholder="Username" autocomplete="username" onkeydown="loginOnEnter(event)" />
-      <input id="password" type="password" placeholder="Password" autocomplete="current-password" onkeydown="loginOnEnter(event)" />
-      <button style="width:100%;margin-top:8px" onclick="login()">Login</button>
-      <div class="err" id="loginErr"></div>
+      <h1>OVER SPACE</h1>
+      <label>ID</label>
+      <input id="userId" placeholder="M या U" autocomplete="username" />
+      <label>Password</label>
+      <input id="password" type="password" placeholder="Password" autocomplete="current-password" />
+      <button id="loginBtn">LOGIN</button>
+      <div class="error" id="errorBox"></div>
+      <div class="hint">M password: 2006 | U password: 2810</div>
     </div>
-  </section>
+  </div>
 
-  <main class="app" id="app">
-    <header class="topbar">
-      <div class="profileWrap">
-        <img id="myAvatar" class="avatar" alt="profile" />
-        <div>
-          <div class="who"><span id="me"></span> की Chat</div>
-          <div class="status" id="netStatus">Starting...</div>
-        </div>
-      </div>
-      <div class="actions">
-        <label class="secondary profileBtn" style="cursor:pointer;padding:7px 8px;border-radius:10px;font-size:10px">📷<input id="profileInput" type="file" accept="image/*" onchange="updateProfilePic(event)" /></label>
-        <input type="date" id="chatDate" onchange="watchMessages()" />
-        <button class="secondary" onclick="resetChat()">Reset</button>
-        <button class="secondary" onclick="logout()">Logout</button>
-      </div>
-    </header>
+  <div class="chat-app" id="chatApp">
+    <div class="topbar">
+      <div class="avatar" id="avatar">M</div>
+      <div class="who"><b id="chatTitle">Chat</b><small id="statusText">online • WhatsApp style</small></div>
+      <input type="file" id="profileInput" accept="image/*" />
+      <button class="profile-btn" id="profileBtn">Profile Image</button>
+      <button class="logout-btn" id="logoutBtn">Logout</button>
+    </div>
 
-    <section class="messages" id="messages"></section>
+    <div class="messages" id="messages"></div>
 
-    <footer class="composer">
-      <div class="setup" id="setupBox">
-        <b>Firebase config missing.</b> Same phone पर test चलेगा, लेकिन दूसरे phone पर messages भेजने के लिए code में <b>firebaseConfig</b> की real values paste करनी होंगी.
-      </div>
-      <div class="emoji-panel" id="emojiPanel"></div>
-      <div class="sticker-panel" id="stickerPanel"></div>
-      <textarea id="text" maxlength="5000" placeholder="Message"></textarea>
-      <div class="row">
-        <button class="tool secondary" onclick="toggleEmoji()">😊</button>
-        <button class="tool secondary" onclick="toggleStickers()">💌</button>
-        <label class="tool secondary" style="cursor:pointer;text-align:center">🖼️<input id="imageInput" type="file" accept="image/*" hidden onchange="pickImage(event)" /></label>
-        <button id="voiceBtn" class="tool secondary" onclick="toggleRecording()">🎙️</button>
-        <span class="hint grow"><span id="count">0</span>/5000 <span id="picked" class="fileName"></span></span>
-        <button class="send" id="sendBtn" onclick="sendMessage()">Send</button>
-      </div>
-    </footer>
-  </main>
+    <div class="picker" id="picker">
+      <h3>Love Emojis</h3>
+      <div id="emojiList"></div>
+      <h3>Romantic Stickers</h3>
+      <div id="stickerList"></div>
+    </div>
 
-  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
-  <script>
+    <div class="composer">
+      <button class="round" id="emojiBtn">😊</button>
+      <input id="messageInput" placeholder="Message type करें और Enter दबाएँ..." />
+      <button class="send" id="sendBtn">➤</button>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-analytics.js";
+    import { getDatabase, ref, push, onChildAdded, onValue, set, get, query, limitToLast, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+
     const firebaseConfig = {
-      apiKey: "AIzaSyBqBTppcUnoODy2uY3JaYZZ9DVjzADJRQ4",
+      apiKey: "AIzaSyBqBTpPcUnoODy2uY3JaYZ79DVjzADJRQ4",
       authDomain: "akaur-e7f57.firebaseapp.com",
       databaseURL: "https://akaur-e7f57-default-rtdb.firebaseio.com",
       projectId: "akaur-e7f57",
       storageBucket: "akaur-e7f57.firebasestorage.app",
       messagingSenderId: "970506787698",
-      appId: "1:970506787698:web:18fd5ae92be7e230fe5beb"
+      appId: "1:970506787698:web:18fd5ae92be7e230fe5beb",
+      measurementId: "G-8YFM3BXRPP"
     };
 
-    const USERS = { U:"2810", M:"2006" };
-    let currentUser = sessionStorage.getItem("akUrUser") || "";
-    if(currentUser === "AKA" || currentUser === "AK" || currentUser === "UR") currentUser = currentUser === "UR" ? "U" : "M";
-    let db = null, firebaseOK = false, currentRef = null, currentListener = null, lastMsgTotal = 0;
-    let imageData = "", audioData = "", mediaRecorder = null, audioChunks = [];
-    const emojis = "❤️ 💖 💗 💓 💞 💕 💘 💝 💟 ❣️ 💋 💌 🌹 🥰 😍 😘 🫶 💑 💏 👩‍❤️‍👨 💐 ✨ 😀 😃 😄 😁 😆 😂 🤣 😊 😍 🥰 😘 😗 😙 😚 😉 😌 🤗 🤭 😋 😜 🤪 😝 😎 🥳 🥺 😢 😭 😡 😴 ❤️ 🧡 💛 💚 💙 💜 🤎 🖤 🤍 💘 💝 💖 💗 💓 💞 💕 💟 ❣️ 💔 💋 💌 🌹 🥀 🌺 🌸 🌼 🌻 ⭐ 🌙 ☀️ 🌈 🔥 ✨ 🎉 🎊 🎁 👋 👍 👎 🙏 👏 🙌 🤝 💪 👀 👄 👩‍❤️‍👨 💏 💑 🐦 🕊️ 🦢 🍫 🎂 ☕ 🍕 📱 🎵 🎶 🎧".split(/\s+/);
+    const app = initializeApp(firebaseConfig);
+    try { getAnalytics(app); } catch(e) { console.log('Analytics skipped:', e.message); }
+    const db = getDatabase(app);
 
-    const loveStickers = ["❤️ I Love You ❤️", "💖 Love You जान 💖", "🥰 Miss You 🥰", "😘 Kiss 😘", "🌹 For You 🌹", "💞 Forever 💞", "💌 પ્રેમ 💌", "❤️ હું તને પ્રેમ કરું છું ❤️", "💖 મિસ યુ 💖", "🌹 મારા દિલમાં તું 🌹", "💘 आई लव यू 💘", "💞 मेरी जान 💞", "💕 तुम खास हो 💕", "💝 Only You 💝", "💓 Dil Se Love 💓", "💑 U♡M 💑", "🫶 Love Love 🫶", "💋 Sweet Kiss 💋", "💐 मेरी मोहब्बत 💐", "✨ Full Love ✨"];
+    const users = { m: '2006', u: '2810' };
+    let currentUser = localStorage.getItem('currentUser') || '';
+    const loginScreen = document.getElementById('loginScreen');
+    const chatApp = document.getElementById('chatApp');
+    const messages = document.getElementById('messages');
+    const messageInput = document.getElementById('messageInput');
+    const picker = document.getElementById('picker');
+    const avatar = document.getElementById('avatar');
+    const statusText = document.getElementById('statusText');
 
-    function today(){ return new Date().toISOString().slice(0,10); }
-    function path(){ return "akaUrChat/" + document.getElementById("chatDate").value; }
-    function setStatus(text, cls){ const s=document.getElementById("netStatus"); s.textContent=text; s.className="status " + (cls||""); }
-    function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c])); }
-    function isFirebaseFilled(){ return firebaseConfig.apiKey && !firebaseConfig.apiKey.includes("PASTE_") && firebaseConfig.databaseURL && firebaseConfig.databaseURL.includes("firebaseio.com") && !firebaseConfig.databaseURL.includes("PASTE_"); }
+    const emojis = ['😍','😘','🥰','❤️','💕','💖','💘','💝','💞','💓','🌹','🫶','💌','💋','🤍','🖤','✨','🌙','🥺','🫰'];
+    const stickers = ['🌹❤️','💑','🧸💖','💍✨','🌙💕','☕❤️','🎁💝','💌🪽','😘🌹','Forever ♡','Love You ❤️','Miss You 💕'];
 
-    function initFirebase(){
-      if(!isFirebaseFilled()){
-        firebaseOK = false; setStatus("Offline test mode", "warn"); document.getElementById("setupBox").style.display = "block"; return;
+    const chatRef = ref(db, 'overSpaceChat/messages');
+    const avatarsRoot = ref(db, 'overSpaceChat/avatars');
+    let loadedKeys = new Set();
+    let chat = [];
+
+    function nowTime(){ return new Date().toLocaleTimeString([], {hour:'numeric', minute:'2-digit'}); }
+    function otherUser(){ return currentUser === 'm' ? 'u' : 'm'; }
+
+    async function login(){
+      const id = document.getElementById('userId').value.trim().toLowerCase();
+      const pass = document.getElementById('password').value.trim();
+      if (users[id] && users[id] === pass) {
+        currentUser = id;
+        localStorage.setItem('currentUser', currentUser);
+        await set(ref(db, 'overSpaceChat/presence/' + currentUser), { online:true, lastSeen: serverTimestamp() });
+        flowerBlast();
+        setTimeout(showChat, 350);
+      } else {
+        document.getElementById('errorBox').textContent = 'गलत ID या Password';
       }
-      try{ firebase.initializeApp(firebaseConfig); db = firebase.database(); firebaseOK = true; setStatus("Online sync ready ✓", "ok"); }
-      catch(e){ firebaseOK = false; setStatus("Firebase config error", "bad"); console.error(e); }
     }
 
-    function init(){
-      document.getElementById("chatDate").value = today();
-      document.getElementById("emojiPanel").innerHTML = `<div class="emoji-head"><b>Love Emoji</b><button class="secondary emoji-close" onclick="closeEmoji()">Close ✕</button></div><div class="emoji-list">${emojis.map(e => `<button onclick="addEmoji('${e}')">${e}</button>`).join("")}</div>`;
-      document.getElementById("stickerPanel").innerHTML = `<div class="sticker-head"><b>Love Stickers / स्टिकर / સ્ટિકર</b><button class="secondary emoji-close" onclick="closeStickers()">Close ✕</button></div><div class="sticker-list">${loveStickers.map(st => `<button onclick="sendSticker('${st.replace(/'/g,"\\'")}')">${st}</button>`).join("")}</div>`;
-      const textEl = document.getElementById("text");
-      textEl.addEventListener("input", e => document.getElementById("count").textContent = e.target.value.length);
-      textEl.addEventListener("keydown", e => { if(e.key === "Enter" && !e.shiftKey){ e.preventDefault(); sendMessage(); } });
-      initFirebase(); if(currentUser && USERS[currentUser]) showApp();
-      setInterval(() => { if(document.getElementById("chatDate").value !== today()){ document.getElementById("chatDate").value = today(); watchMessages(); } }, 60000);
-      setInterval(autoClear, 15000);
+    function showChat(){
+      loginScreen.style.display = 'none';
+      chatApp.style.display = 'block';
+      document.getElementById('chatTitle').textContent = currentUser.toUpperCase() + ' ↔ ' + otherUser().toUpperCase();
+      statusText.textContent = 'online chat • Firebase connected';
+      loadAvatar();
+      startRealtimeChat();
+      messageInput.focus();
     }
 
-    function login(){
-      const u = document.getElementById("username").value.trim().toUpperCase();
-      const p = document.getElementById("password").value.trim();
-      if(USERS[u] && USERS[u] === p){ currentUser = u; sessionStorage.setItem("akUrUser", u); showApp(); }
-      else document.getElementById("loginErr").textContent = "Wrong username or password";
-    }
-    function showApp(){ document.getElementById("loginScreen").style.display="none"; document.getElementById("app").style.display="grid"; document.getElementById("me").textContent=currentUser; loadProfilePic(); watchMessages(); }
-    function logout(){ sessionStorage.removeItem("akUrUser"); sessionStorage.removeItem("akaUrUser"); location.reload(); }
-
-    function localKey(){ return path() + "/messages"; }
-    function getLocalMessages(){ try{return JSON.parse(localStorage.getItem(localKey()) || "[]");}catch(e){return [];} }
-    function setLocalMessages(arr){ localStorage.setItem(localKey(), JSON.stringify(arr)); }
-
-    function watchMessages(){
-      const box = document.getElementById("messages");
-      if(!firebaseOK){ renderMessages(getLocalMessages()); return; }
-      if(currentRef && currentListener) currentRef.off("value", currentListener);
-      currentRef = db.ref(path()+"/messages");
-      currentListener = snap => {
-        const val = snap.val() || {};
-        const msgs = Object.entries(val).map(([id,m]) => ({id,...m,user:m.user === "AKA" ? "AK" : m.user})).sort((a,b)=>(a.time||0)-(b.time||0));
-        renderMessages(msgs);
-      };
-      currentRef.on("value", currentListener, err => { setStatus("Database rules/config error", "bad"); box.innerHTML='<div class="empty">Firebase Database rules check करें.</div>'; console.error(err); });
+    async function startRealtimeChat(){
+      messages.innerHTML = '';
+      chat = [];
+      loadedKeys.clear();
+      const snap = await get(chatRef);
+      if(!snap.exists()) {
+        await push(chatRef, {user:'m', text:'Hi U ❤️', time:'1:10 PM', createdAt: Date.now() - 400000});
+        await push(chatRef, {user:'u', text:'Hi M 🥰', time:'1:11 PM', createdAt: Date.now() - 300000});
+        await push(chatRef, {user:'m', text:'कैसी हो? 🌹', time:'1:12 PM', createdAt: Date.now() - 200000});
+        await push(chatRef, {user:'u', text:'अच्छी हूँ, तुम बताओ 💕', time:'1:15 PM', createdAt: Date.now() - 100000});
+      }
+      onChildAdded(query(chatRef, limitToLast(300)), snap => {
+        if(loadedKeys.has(snap.key)) return;
+        loadedKeys.add(snap.key);
+        const msg = snap.val();
+        chat.push(msg);
+        addMessage(msg);
+      });
     }
 
-    function groupMessages(msgs){ return msgs; }
-
-    function renderMessages(msgs){
-      const box = document.getElementById("messages");
-      const wasNearBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 80;
-      if(!msgs.length){ lastMsgTotal = 0; box.innerHTML = '<div class="empty">No messages yet<br>पहला message भेजें...</div>'; return; }
-      const newCount = Math.max(0, msgs.length - lastMsgTotal);
-      const countHtml = newCount > 0 && lastMsgTotal > 0 ? `<div class="newCount">${newCount} new message${newCount>1?'s':''} ↓</div>` : "";
-      box.innerHTML = countHtml + msgs.map(m => {
-        const mine = m.user === currentUser;
-        let content = "";
-        if(m.text) content += escapeHtml(m.text);
-        if(m.image) content += `<img src="${m.image}" alt="sent image">`;
-        if(m.audio) content += `<audio controls src="${m.audio}"></audio>`;
-        if(m.sticker) content += `<div class="stickerText">${escapeHtml(m.sticker)}</div>`;
-        return `<div class="msg ${mine?'mine':'theirs'}"><div class="meta senderLine">${escapeHtml(m.user||'')}</div><div class="bubble">${content}</div><div class="meta">${new Date(m.time||Date.now()).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</div></div>`;
-      }).join("");
-      if(wasNearBottom || newCount) box.scrollTop = box.scrollHeight;
-      lastMsgTotal = msgs.length;
+    function addMessage(m){
+      const row = document.createElement('div');
+      row.className = 'msg-row ' + (m.user === currentUser ? 'me' : 'other');
+      row.innerHTML = `<div class="bubble"><div class="name">${String(m.user || '').toUpperCase()}</div>${escapeHtml(String(m.text || ''))}<span class="time">${escapeHtml(String(m.time || ''))}</span></div>`;
+      messages.appendChild(row);
+      messages.scrollTop = messages.scrollHeight;
     }
 
     async function sendMessage(){
-      const textEl = document.getElementById("text");
-      const text = textEl.value.trim();
-      if(!text && !imageData && !audioData) return;
-      const msg = {user:currentUser, text, image:imageData, audio:audioData, time:Date.now()};
-      document.getElementById("sendBtn").disabled = true;
-      try{
-        if(firebaseOK) await db.ref(path()+"/messages").push(msg);
-        else { const arr = getLocalMessages(); arr.push({...msg,id:String(Date.now())}); setLocalMessages(arr); renderMessages(arr); }
-        textEl.value=""; document.getElementById("count").textContent="0"; imageData=""; audioData=""; document.getElementById("picked").textContent=""; document.getElementById("imageInput").value="";
-      }catch(e){ alert("Message send नहीं हुआ. Firebase config/rules check करें."); console.error(e); }
-      finally{ document.getElementById("sendBtn").disabled = false; textEl.focus(); }
+      const text = messageInput.value.trim();
+      if(!text) return;
+      messageInput.value = '';
+      await push(chatRef, {user: currentUser, text, time: nowTime(), createdAt: serverTimestamp()});
+      flashSend();
     }
 
-    async function manualClear(){
-      if(!confirm("इस date की chat clear करनी है?")) return;
-      if(firebaseOK) await db.ref(path()).remove(); else { localStorage.removeItem(localKey()); renderMessages([]); }
+    function escapeHtml(str){
+      return str.replace(/[&<>'"]/g, t => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[t]));
     }
 
-    async function resetChat(){
-      if(!confirm("आज की पूरी chat reset/delete करनी है?")) return;
-      lastMsgTotal = 0;
-      if(firebaseOK){
-        await db.ref(path()+"/messages").remove();
-      }else{
-        localStorage.removeItem(localKey());
-        renderMessages([]);
-      }
-      document.getElementById("text").value = "";
-      document.getElementById("count").textContent = "0";
-      imageData = ""; audioData = "";
-      document.getElementById("picked").textContent = "";
-      closeEmoji(); closeStickers();
-    }
-    async function autoClear(){
-      const now = Date.now();
-      const limit = 5 * 60 * 1000;
-
-      // Local/offline mode: सिर्फ वही messages हटेंगे जो 5 minutes old हो चुके हैं.
-      // अभी-अभी भेजे हुए messages रहेंगे, पूरी chat एक साथ clear नहीं होगी.
-      if(!firebaseOK){
-        const arr = getLocalMessages();
-        const fresh = arr.filter(m => now - Number(m.time || now) < limit);
-        if(fresh.length !== arr.length){
-          setLocalMessages(fresh);
-          renderMessages(fresh);
+    function makePicker(){
+      document.getElementById('emojiList').innerHTML = emojis.map(e => `<span class="item">${e}</span>`).join('');
+      document.getElementById('stickerList').innerHTML = stickers.map(e => `<span class="item">${e}</span>`).join('');
+      picker.addEventListener('click', e => {
+        if(e.target.classList.contains('item')) {
+          messageInput.value += e.target.textContent;
+          messageInput.focus();
         }
-        return;
+      });
+    }
+
+    function flashSend(){
+      const btn = document.getElementById('sendBtn');
+      btn.style.filter = 'brightness(1.8)';
+      setTimeout(()=> btn.style.filter = '', 180);
+    }
+
+    function flowerBlast(){
+      for(let i=0; i<32; i++){
+        const f = document.createElement('div');
+        f.className='flower';
+        f.textContent = ['🌸','🌹','💮','🌺','💖'][Math.floor(Math.random()*5)];
+        f.style.setProperty('--x', (Math.random()*520-260)+'px');
+        f.style.setProperty('--y', (Math.random()*520-260)+'px');
+        document.body.appendChild(f);
+        setTimeout(()=>f.remove(), 1000);
       }
-
-      // Firebase mode: हर message को उसके own timestamp से check करके delete करो.
-      // Global timer से पूरी chat delete नहीं होगी.
-      try{
-        const ref = db.ref(path()+"/messages");
-        const snap = await ref.get();
-        const updates = {};
-        snap.forEach(child => {
-          const m = child.val() || {};
-          if(now - Number(m.time || now) >= limit) updates[child.key] = null;
-        });
-        if(Object.keys(updates).length) await ref.update(updates);
-      }catch(e){ console.error("Auto delete failed", e); }
-    }
-    function toggleEmoji(){ const p=document.getElementById("emojiPanel"); p.style.display = p.style.display === "block" ? "none" : "block"; }
-    function closeEmoji(){ document.getElementById("emojiPanel").style.display = "none"; }
-    function addEmoji(e){ const t=document.getElementById("text"); t.value += e; t.focus(); document.getElementById("count").textContent = t.value.length; }
-    function pickImage(ev){
-      const f = ev.target.files[0]; if(!f) return;
-      if(f.size > 900000){ alert("Image 900KB से कम रखें."); ev.target.value=""; return; }
-      const r = new FileReader(); r.onload = () => { imageData = r.result; document.getElementById("picked").textContent = "Image ready ✓"; }; r.readAsDataURL(f);
-    }
-    async function toggleRecording(){
-      const btn = document.getElementById("voiceBtn");
-      if(mediaRecorder && mediaRecorder.state === "recording"){ mediaRecorder.stop(); btn.textContent="🎙️"; return; }
-      try{
-        const stream = await navigator.mediaDevices.getUserMedia({audio:true}); audioChunks=[]; mediaRecorder = new MediaRecorder(stream);
-        mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
-        mediaRecorder.onstop = () => {
-          const blob = new Blob(audioChunks, {type:"audio/webm"});
-          if(blob.size > 900000){ alert("Voice छोटा रखें, 900KB से कम."); stream.getTracks().forEach(t=>t.stop()); return; }
-          const r = new FileReader(); r.onload = () => { audioData = r.result; document.getElementById("picked").textContent = "Voice ready ✓"; }; r.readAsDataURL(blob);
-          stream.getTracks().forEach(t=>t.stop());
-        };
-        mediaRecorder.start(); btn.textContent="⏹️";
-      }catch(e){ alert("Mic permission allow करें. Recording HTTPS पर चलेगी."); }
     }
 
-    function loginOnEnter(e){ if(e.key === "Enter"){ e.preventDefault(); login(); } }
-    function heartBlast(){ /* heart effect removed */ }
-    function profileKey(){ return "akUrProfile_" + currentUser; }
-    function loadProfilePic(){ const img=document.getElementById("myAvatar"); const saved=localStorage.getItem(profileKey()); img.src = saved || "data:image/svg+xml;utf8," + encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80'><rect width='100%' height='100%' fill='black'/><text x='50%' y='56%' font-size='34' fill='white' text-anchor='middle' font-family='Arial'>${currentUser||''}</text></svg>`); }
-    function updateProfilePic(ev){ const f=ev.target.files[0]; if(!f) return; if(f.size>900000){ alert("Profile photo 900KB से कम रखें."); ev.target.value=""; return; } const r=new FileReader(); r.onload=()=>{ localStorage.setItem(profileKey(), r.result); loadProfilePic(); }; r.readAsDataURL(f); }
-    function toggleStickers(){ const p=document.getElementById("stickerPanel"); p.style.display = p.style.display === "block" ? "none" : "block"; }
-    function closeStickers(){ document.getElementById("stickerPanel").style.display = "none"; }
-    async function sendSticker(st){
-      const msg = {user:currentUser, text:"", sticker:st, image:"", audio:"", time:Date.now()};
-      try{ if(firebaseOK) await db.ref(path()+"/messages").push(msg); else { const arr=getLocalMessages(); arr.push({...msg,id:String(Date.now())}); setLocalMessages(arr); renderMessages(arr); } closeStickers(); }
-      catch(e){ alert("Sticker send नहीं हुआ. Firebase config/rules check करें."); console.error(e); }
+    function loadAvatar(){
+      onValue(ref(db, 'overSpaceChat/avatars/' + currentUser), snap => {
+        const img = snap.val();
+        if(img) avatar.innerHTML = `<img src="${img}" alt="profile">`;
+        else avatar.textContent = currentUser.toUpperCase();
+      });
     }
 
-    init();
+    document.getElementById('loginBtn').onclick = login;
+    document.getElementById('password').addEventListener('keydown', e => { if(e.key==='Enter') login(); });
+    document.getElementById('userId').addEventListener('keydown', e => { if(e.key==='Enter') login(); });
+    document.getElementById('sendBtn').onclick = sendMessage;
+    messageInput.addEventListener('keydown', e => { if(e.key==='Enter') sendMessage(); });
+    document.getElementById('emojiBtn').onclick = () => picker.style.display = picker.style.display === 'block' ? 'none' : 'block';
+    document.getElementById('logoutBtn').onclick = async () => {
+      if(currentUser) await set(ref(db, 'overSpaceChat/presence/' + currentUser), { online:false, lastSeen: serverTimestamp() });
+      localStorage.removeItem('currentUser');
+      location.reload();
+    };
+    document.getElementById('profileBtn').onclick = () => document.getElementById('profileInput').click();
+    document.getElementById('profileInput').addEventListener('change', e => {
+      const file = e.target.files[0];
+      if(!file) return;
+      if(file.size > 700000) { alert('Profile image 700KB से छोटी रखें।'); return; }
+      const reader = new FileReader();
+      reader.onload = async () => await set(ref(db, 'overSpaceChat/avatars/' + currentUser), reader.result);
+      reader.readAsDataURL(file);
+    });
+
+    makePicker();
+    if(currentUser && users[currentUser]) showChat();
   </script>
 </body>
 </html>
