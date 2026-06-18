@@ -179,7 +179,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
     import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-analytics.js";
-    import { getDatabase, ref, push, onChildAdded, onChildRemoved, onValue, set, get, query, limitToLast, serverTimestamp, remove } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+    import { getDatabase, ref, push, onChildAdded, onChildRemoved, onValue, set, get, query, limitToLast, serverTimestamp, remove, onDisconnect } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBqBTpPcUnoODy2uY3JaYZ79DVjzADJRQ4",
@@ -197,7 +197,10 @@
     const db = getDatabase(app);
 
     const users = { m: '2006', u: '2810' };
-    let currentUser = localStorage.getItem('currentUser') || '';
+    // sessionStorage browser/tab close hote hi clear ho jata hai, isliye auto logout ho jayega
+    localStorage.removeItem('currentUser'); // purane saved login ko clear karein
+    let currentUser = sessionStorage.getItem('currentUser') || '';
+    let presenceDisconnectRef = null;
     const loginScreen = document.getElementById('loginScreen');
     const chatApp = document.getElementById('chatApp');
     const messages = document.getElementById('messages');
@@ -217,13 +220,33 @@
     function nowTime(){ return new Date().toLocaleTimeString([], {hour:'numeric', minute:'2-digit'}); }
     function otherUser(){ return currentUser === 'm' ? 'u' : 'm'; }
 
+    async function setUserOnline(){
+      if(!currentUser) return;
+      const presenceRef = ref(db, 'overSpaceChat/presence/' + currentUser);
+      presenceDisconnectRef = onDisconnect(presenceRef);
+      await presenceDisconnectRef.set({ online:false, lastSeen: serverTimestamp() });
+      await set(presenceRef, { online:true, lastSeen: serverTimestamp() });
+    }
+
+    async function setUserOffline(){
+      if(!currentUser) return;
+      const presenceRef = ref(db, 'overSpaceChat/presence/' + currentUser);
+      try { if(presenceDisconnectRef) await presenceDisconnectRef.cancel(); } catch(e) {}
+      await set(presenceRef, { online:false, lastSeen: serverTimestamp() });
+    }
+
+    function clearLoginSession(){
+      sessionStorage.removeItem('currentUser');
+      localStorage.removeItem('currentUser');
+    }
+
     async function login(){
       const id = document.getElementById('userId').value.trim().toLowerCase();
       const pass = document.getElementById('password').value.trim();
       if (users[id] && users[id] === pass) {
         currentUser = id;
-        localStorage.setItem('currentUser', currentUser);
-        await set(ref(db, 'overSpaceChat/presence/' + currentUser), { online:true, lastSeen: serverTimestamp() });
+        sessionStorage.setItem('currentUser', currentUser);
+        await setUserOnline();
         flowerBlast();
         setTimeout(showChat, 350);
       } else {
@@ -389,8 +412,8 @@
       picker.style.display = picker.style.display === 'block' ? 'none' : 'block';
     };
     document.getElementById('logoutBtn').onclick = async () => {
-      if(currentUser) await set(ref(db, 'overSpaceChat/presence/' + currentUser), { online:false, lastSeen: serverTimestamp() });
-      localStorage.removeItem('currentUser');
+      await setUserOffline();
+      clearLoginSession();
       location.reload();
     };
     document.getElementById('profileBtn').onclick = () => document.getElementById('profileInput').click();
@@ -404,11 +427,13 @@
     });
 
     window.addEventListener('beforeunload', () => {
-      if(currentUser) set(ref(db, 'overSpaceChat/presence/' + currentUser), { online:false, lastSeen: serverTimestamp() });
+      // Browser/tab close ya refresh par saved login clear ho jayega.
+      // Firebase onDisconnect presence ko offline mark karega.
+      clearLoginSession();
     });
 
     makePicker();
-    if(currentUser && users[currentUser]) showChat();
+    if(currentUser && users[currentUser]) { setUserOnline().then(showChat); }
   </script>
 </body>
 </html>
