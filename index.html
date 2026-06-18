@@ -114,7 +114,7 @@
       display:inline-flex; align-items:center; justify-content:center; width:38px; height:38px; margin:4px;
       border-radius:12px; background:#1c1c1c; cursor:pointer; font-size:23px; transition:.15s;
     }
-    .item:hover { transform:scale(1.18); background:#fff; }
+    .item:hover { transform:scale(1.18); background:#fff; color:#000; }
     .flower {
       position:fixed; top:50%; left:50%; pointer-events:none; font-size:22px; animation: blast 1s ease-out forwards; z-index:99;
     }
@@ -179,7 +179,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
     import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-analytics.js";
-    import { getDatabase, ref, push, onChildAdded, onValue, set, get, query, limitToLast, serverTimestamp, remove } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+    import { getDatabase, ref, push, onChildAdded, onChildRemoved, onValue, set, get, query, limitToLast, serverTimestamp, remove } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBqBTpPcUnoODy2uY3JaYZ79DVjzADJRQ4",
@@ -210,9 +210,8 @@
     const stickers = ['🌹❤️','💑','🧸💖','💍✨','🌙💕','☕❤️','🎁💝','💌🪽','😘🌹','Forever ♡','Love You ❤️','Miss You 💕'];
 
     const chatRef = ref(db, 'overSpaceChat/messages');
-    const avatarsRoot = ref(db, 'overSpaceChat/avatars');
     let loadedKeys = new Set();
-    let chat = [];
+    let listenerStarted = false;
     const AUTO_DELETE_MS = 2 * 60 * 1000;
 
     function nowTime(){ return new Date().toLocaleTimeString([], {hour:'numeric', minute:'2-digit'}); }
@@ -243,16 +242,19 @@
     }
 
     async function startRealtimeChat(){
+      if(listenerStarted) return;
+      listenerStarted = true;
       messages.innerHTML = '';
-      chat = [];
       loadedKeys.clear();
       await cleanupOldMessages();
       setInterval(cleanupOldMessages, 30000);
 
-      onChildAdded(query(chatRef, limitToLast(300)), snap => {
+      const recentChat = query(chatRef, limitToLast(300));
+
+      onChildAdded(recentChat, snap => {
         if(loadedKeys.has(snap.key)) return;
         loadedKeys.add(snap.key);
-        const msg = snap.val();
+        const msg = snap.val() || {};
         const createdAt = Number(msg.createdAt || Date.now());
 
         if(Date.now() - createdAt >= AUTO_DELETE_MS) {
@@ -260,9 +262,17 @@
           return;
         }
 
-        chat.push(msg);
         addMessage(msg, snap.key);
         setTimeout(() => remove(ref(db, 'overSpaceChat/messages/' + snap.key)), Math.max(0, AUTO_DELETE_MS - (Date.now() - createdAt)));
+      }, error => {
+        console.error('Chat receive error:', error);
+        statusText.textContent = 'Firebase rules/connection problem';
+      });
+
+      onChildRemoved(chatRef, snap => {
+        const row = messages.querySelector(`[data-key="${snap.key}"]`);
+        if(row) row.remove();
+        loadedKeys.delete(snap.key);
       });
     }
 
@@ -280,20 +290,45 @@
     }
 
     function addMessage(m, key){
+      if(!m || !m.user || typeof m.text === 'undefined') return;
       const row = document.createElement('div');
       row.className = 'msg-row ' + (m.user === currentUser ? 'me' : 'other');
       if(key) row.dataset.key = key;
-      row.innerHTML = `<div class="bubble"><div class="name">${String(m.user || '').toUpperCase()}</div>${escapeHtml(String(m.text || ''))}<span class="time">${escapeHtml(String(m.time || ''))}</span></div>`;
+
+      const bubble = document.createElement('div');
+      bubble.className = 'bubble';
+
+      const name = document.createElement('div');
+      name.className = 'name';
+      name.textContent = String(m.user || '').toUpperCase();
+
+      const textNode = document.createTextNode(String(m.text || ''));
+
+      const time = document.createElement('span');
+      time.className = 'time';
+      time.textContent = String(m.time || '');
+
+      bubble.appendChild(name);
+      bubble.appendChild(textNode);
+      bubble.appendChild(time);
+      row.appendChild(bubble);
       messages.appendChild(row);
       messages.scrollTop = messages.scrollHeight;
     }
 
     async function sendMessage(){
       const text = messageInput.value.trim();
-      if(!text) return;
+      if(!text || !currentUser) return;
       messageInput.value = '';
-      await push(chatRef, {user: currentUser, text, time: nowTime(), createdAt: Date.now()});
-      flashSend();
+      picker.style.display = 'none';
+      try {
+        await push(chatRef, {user: currentUser, text, time: nowTime(), createdAt: Date.now()});
+        flashSend();
+      } catch (error) {
+        console.error('Message send error:', error);
+        alert('Message send nahi hua. Firebase Realtime Database rules/check connection dekhein.');
+        messageInput.value = text;
+      }
     }
 
     function escapeHtml(str){
@@ -306,8 +341,15 @@
       picker.addEventListener('click', e => {
         if(e.target.classList.contains('item')) {
           messageInput.value += e.target.textContent;
+          picker.style.display = 'none';
           messageInput.focus();
         }
+      });
+
+      document.addEventListener('click', e => {
+        const clickedEmojiButton = e.target.closest('#emojiBtn');
+        const clickedPicker = e.target.closest('#picker');
+        if(!clickedEmojiButton && !clickedPicker) picker.style.display = 'none';
       });
     }
 
@@ -342,7 +384,10 @@
     document.getElementById('userId').addEventListener('keydown', e => { if(e.key==='Enter') login(); });
     document.getElementById('sendBtn').onclick = sendMessage;
     messageInput.addEventListener('keydown', e => { if(e.key==='Enter') sendMessage(); });
-    document.getElementById('emojiBtn').onclick = () => picker.style.display = picker.style.display === 'block' ? 'none' : 'block';
+    document.getElementById('emojiBtn').onclick = e => {
+      e.stopPropagation();
+      picker.style.display = picker.style.display === 'block' ? 'none' : 'block';
+    };
     document.getElementById('logoutBtn').onclick = async () => {
       if(currentUser) await set(ref(db, 'overSpaceChat/presence/' + currentUser), { online:false, lastSeen: serverTimestamp() });
       localStorage.removeItem('currentUser');
@@ -356,6 +401,10 @@
       const reader = new FileReader();
       reader.onload = async () => await set(ref(db, 'overSpaceChat/avatars/' + currentUser), reader.result);
       reader.readAsDataURL(file);
+    });
+
+    window.addEventListener('beforeunload', () => {
+      if(currentUser) set(ref(db, 'overSpaceChat/presence/' + currentUser), { online:false, lastSeen: serverTimestamp() });
     });
 
     makePicker();
