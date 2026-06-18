@@ -215,7 +215,7 @@
     const chatRef = ref(db, 'overSpaceChat/messages');
     let loadedKeys = new Set();
     let listenerStarted = false;
-    const AUTO_DELETE_MS = 2 * 60 * 1000;
+    const CHAT_AUTO_DELETE_MS = 3 * 60 * 1000; // 3 minutes: messages older than this will be cleared
 
     function nowTime(){ return new Date().toLocaleTimeString([], {hour:'numeric', minute:'2-digit'}); }
     function otherUser(){ return currentUser === 'm' ? 'u' : 'm'; }
@@ -258,7 +258,7 @@
       loginScreen.style.display = 'none';
       chatApp.style.display = 'block';
       document.getElementById('chatTitle').textContent = currentUser.toUpperCase() + ' ↔ ' + otherUser().toUpperCase();
-      statusText.textContent = 'online chat • Firebase connected';
+      statusText.textContent = 'online chat • messages auto-delete after 3 minutes';
       loadAvatar();
       startRealtimeChat();
       messageInput.focus();
@@ -270,7 +270,7 @@
       messages.innerHTML = '';
       loadedKeys.clear();
       await cleanupOldMessages();
-      setInterval(cleanupOldMessages, 30000);
+      setInterval(cleanupOldMessages, 10000);
 
       const recentChat = query(chatRef, limitToLast(300));
 
@@ -278,15 +278,15 @@
         if(loadedKeys.has(snap.key)) return;
         loadedKeys.add(snap.key);
         const msg = snap.val() || {};
-        const createdAt = Number(msg.createdAt || Date.now());
+        const createdAt = Number(msg.createdAt || msg.clientAt || Date.now());
 
-        if(Date.now() - createdAt >= AUTO_DELETE_MS) {
+        // Per-message delete timer hata diya hai. Sirf global 3-minute cleanup chalega.
+        if(createdAt && Date.now() - createdAt >= CHAT_AUTO_DELETE_MS) {
           remove(ref(db, 'overSpaceChat/messages/' + snap.key));
           return;
         }
 
         addMessage(msg, snap.key);
-        setTimeout(() => remove(ref(db, 'overSpaceChat/messages/' + snap.key)), Math.max(0, AUTO_DELETE_MS - (Date.now() - createdAt)));
       }, error => {
         console.error('Chat receive error:', error);
         statusText.textContent = 'Firebase rules/connection problem';
@@ -300,16 +300,20 @@
     }
 
     async function cleanupOldMessages(){
-      const snap = await get(chatRef);
-      if(!snap.exists()) return;
-      const now = Date.now();
-      snap.forEach(child => {
-        const msg = child.val();
-        const createdAt = Number(msg.createdAt || 0);
-        if(createdAt && now - createdAt >= AUTO_DELETE_MS) {
-          remove(ref(db, 'overSpaceChat/messages/' + child.key));
-        }
-      });
+      try {
+        const snap = await get(chatRef);
+        if(!snap.exists()) return;
+        const now = Date.now();
+        snap.forEach(child => {
+          const msg = child.val() || {};
+          const createdAt = Number(msg.createdAt || msg.clientAt || 0);
+          if(createdAt && now - createdAt >= CHAT_AUTO_DELETE_MS) {
+            remove(ref(db, 'overSpaceChat/messages/' + child.key));
+          }
+        });
+      } catch(error) {
+        console.error('Chat cleanup error:', error);
+      }
     }
 
     function addMessage(m, key){
@@ -345,7 +349,7 @@
       messageInput.value = '';
       picker.style.display = 'none';
       try {
-        await push(chatRef, {user: currentUser, text, time: nowTime(), createdAt: Date.now()});
+        await push(chatRef, { user: currentUser, text, time: nowTime(), createdAt: serverTimestamp(), clientAt: Date.now() });
         flashSend();
       } catch (error) {
         console.error('Message send error:', error);
