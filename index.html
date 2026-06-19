@@ -215,7 +215,7 @@
     const chatRef = ref(db, 'overSpaceChat/messages');
     let loadedKeys = new Set();
     let listenerStarted = false;
-    const CHAT_AUTO_DELETE_MS = 3 * 60 * 1000; // 3 minutes: messages older than this will be cleared
+    const CHAT_AUTO_DELETE_MS = 15 * 60 * 1000; // 15 minutes: messages older than this will be cleared
 
     function nowTime(){ return new Date().toLocaleTimeString([], {hour:'numeric', minute:'2-digit'}); }
     function otherUser(){ return currentUser === 'm' ? 'u' : 'm'; }
@@ -258,7 +258,7 @@
       loginScreen.style.display = 'none';
       chatApp.style.display = 'block';
       document.getElementById('chatTitle').textContent = currentUser.toUpperCase() + ' ↔ ' + otherUser().toUpperCase();
-      statusText.textContent = 'online chat • messages auto-delete after 3 minutes';
+      statusText.textContent = 'online chat • messages auto-delete after 15 minutes';
       loadAvatar();
       startRealtimeChat();
       messageInput.focus();
@@ -280,7 +280,7 @@
         const msg = snap.val() || {};
         const createdAt = Number(msg.createdAt || msg.clientAt || Date.now());
 
-        // Per-message delete timer hata diya hai. Sirf global 3-minute cleanup chalega.
+        // Per-message delete timer hata diya hai. Sirf global 15-minute cleanup chalega.
         if(createdAt && Date.now() - createdAt >= CHAT_AUTO_DELETE_MS) {
           remove(ref(db, 'overSpaceChat/messages/' + snap.key));
           return;
