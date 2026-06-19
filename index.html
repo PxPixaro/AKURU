@@ -201,6 +201,11 @@
     localStorage.removeItem('currentUser'); // purane saved login ko clear karein
     let currentUser = sessionStorage.getItem('currentUser') || '';
     let presenceDisconnectRef = null;
+
+    // Chrome tab title unread counter + desktop notification setup
+    const baseTitle = document.title;
+    const sessionStartedAt = Date.now();
+    let unreadCount = 0;
     const loginScreen = document.getElementById('loginScreen');
     const chatApp = document.getElementById('chatApp');
     const messages = document.getElementById('messages');
@@ -219,6 +224,49 @@
 
     function nowTime(){ return new Date().toLocaleTimeString([], {hour:'numeric', minute:'2-digit'}); }
     function otherUser(){ return currentUser === 'm' ? 'u' : 'm'; }
+
+    function updatePageTitle(){
+      document.title = unreadCount > 0 ? `(${unreadCount}) ${baseTitle}` : baseTitle;
+    }
+
+    function resetUnreadCount(){
+      unreadCount = 0;
+      updatePageTitle();
+    }
+
+    async function askNotificationPermission(){
+      if(!('Notification' in window)) return;
+      if(Notification.permission === 'default') {
+        try { await Notification.requestPermission(); } catch(e) { console.log('Notification permission skipped:', e.message); }
+      }
+    }
+
+    function isFreshIncomingMessage(msg){
+      if(!msg || !currentUser || msg.user === currentUser) return false;
+      const msgTime = Number(msg.clientAt || msg.createdAt || 0);
+      return msgTime && msgTime >= sessionStartedAt - 5000;
+    }
+
+    function showDesktopNotification(msg){
+      if(!('Notification' in window) || Notification.permission !== 'granted') return;
+      try {
+        const text = String(msg.text || 'New message');
+        new Notification(`New message from ${String(msg.user || '').toUpperCase()}`, {
+          body: text.length > 90 ? text.slice(0, 90) + '...' : text,
+          tag: 'over-space-chat',
+          renotify: true
+        });
+      } catch(e) { console.log('Desktop notification skipped:', e.message); }
+    }
+
+    function handleIncomingAlert(msg){
+      if(!isFreshIncomingMessage(msg)) return;
+      if(document.hidden || !document.hasFocus()) {
+        unreadCount += 1;
+        updatePageTitle();
+        showDesktopNotification(msg);
+      }
+    }
 
     async function setUserOnline(){
       if(!currentUser) return;
@@ -246,6 +294,7 @@
       if (users[id] && users[id] === pass) {
         currentUser = id;
         sessionStorage.setItem('currentUser', currentUser);
+        askNotificationPermission();
         await setUserOnline();
         flowerBlast();
         setTimeout(showChat, 350);
@@ -258,7 +307,7 @@
       loginScreen.style.display = 'none';
       chatApp.style.display = 'block';
       document.getElementById('chatTitle').textContent = currentUser.toUpperCase() + ' ↔ ' + otherUser().toUpperCase();
-      statusText.textContent = 'online chat • messages auto-delete after 15 minutes';
+      statusText.textContent = 'online chat • desktop notifications + unread count on Chrome tab';
       loadAvatar();
       startRealtimeChat();
       messageInput.focus();
@@ -287,6 +336,7 @@
         }
 
         addMessage(msg, snap.key);
+        handleIncomingAlert(msg);
       }, error => {
         console.error('Chat receive error:', error);
         statusText.textContent = 'Firebase rules/connection problem';
@@ -429,6 +479,9 @@
       reader.onload = async () => await set(ref(db, 'overSpaceChat/avatars/' + currentUser), reader.result);
       reader.readAsDataURL(file);
     });
+
+    window.addEventListener('focus', resetUnreadCount);
+    document.addEventListener('visibilitychange', () => { if(!document.hidden) resetUnreadCount(); });
 
     window.addEventListener('beforeunload', () => {
       // Browser/tab close ya refresh par saved login clear ho jayega.
